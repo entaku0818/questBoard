@@ -53,8 +53,11 @@ function ProgressBar({ pct }) {
   )
 }
 
+import { useState } from 'react'
+
 // ── メインコンポーネント ─────────────────────────────────────────────
 export default function ShareCard({ userName = 'あなた', avatarEmoji = '⚔️', items = [] }) {
+  const [copied, setCopied] = useState(false)
   const totalCount    = items.length
   const achievedCount = items.filter((i) => i.status === '完了').length
   const pct           = totalCount === 0 ? 0 : Math.round((achievedCount / totalCount) * 100)
@@ -84,8 +87,8 @@ export default function ShareCard({ userName = 'あなた', avatarEmoji = '⚔�
 
   function handleCopy() {
     navigator.clipboard.writeText(buildShareText())
-      .then(() => alert('テキストをコピーしました！'))
-      .catch(() => alert('コピーに失敗しました'))
+      .then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000) })
+      .catch(() => {/* silent fail */})
   }
 
   const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(buildShareText())}`
@@ -272,7 +275,7 @@ export default function ShareCard({ userName = 'あなた', avatarEmoji = '⚔�
       {/* ══════════════ シェアアクション ══════════════ */}
       <div className="share-card-actions">
         <button className="share-action-btn share-action-btn--primary" onClick={handleCopy}>
-          📋 テキストをコピー
+          {copied ? '✅ コピーしました！' : '📋 テキストをコピー'}
         </button>
         <a
           className="share-action-btn"
