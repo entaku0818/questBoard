@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const GROUPS = [
   { key: 'today', label: '📅 今日', color: '#e74c3c' },
@@ -32,8 +32,16 @@ export default function QuestDetail({ quest, onUpdate }) {
   const [titleInput, setTitleInput] = useState(quest.title)
   const [descInput, setDescInput] = useState(quest.description || '')
 
-  const totalProgress = calcProgress(quest.todos)
-  const tabTodos = quest.todos.filter((t) => t.group === activeTab)
+  useEffect(() => {
+    setTitleInput(quest.title)
+    setDescInput(quest.description || '')
+    setIsEditingTitle(false)
+    setActiveTab('today')
+  }, [quest.id])
+
+  const todos = quest.todos ?? []
+  const totalProgress = calcProgress(todos)
+  const tabTodos = todos.filter((t) => t.group === activeTab)
   const tabDone = tabTodos.filter((t) => t.done).length
   const tabProgress = tabTodos.length === 0 ? 0 : Math.round((tabDone / tabTodos.length) * 100)
   const currentGroup = GROUPS.find((g) => g.key === activeTab)
@@ -49,7 +57,7 @@ export default function QuestDetail({ quest, onUpdate }) {
       done: false,
       createdAt: new Date().toISOString(),
     }
-    onUpdate({ ...quest, todos: [...quest.todos, todo] })
+    onUpdate({ ...quest, todos: [...todos, todo] })
     setNewTodoText('')
     setNewTodoDue('')
   }
@@ -57,25 +65,25 @@ export default function QuestDetail({ quest, onUpdate }) {
   function toggleTodo(todoId) {
     onUpdate({
       ...quest,
-      todos: quest.todos.map((t) => (t.id === todoId ? { ...t, done: !t.done } : t)),
+      todos: todos.map((t) => (t.id === todoId ? { ...t, done: !t.done } : t)),
     })
   }
 
   function deleteTodo(todoId) {
-    onUpdate({ ...quest, todos: quest.todos.filter((t) => t.id !== todoId) })
+    onUpdate({ ...quest, todos: todos.filter((t) => t.id !== todoId) })
   }
 
   function updateTodoDue(todoId, dueDate) {
     onUpdate({
       ...quest,
-      todos: quest.todos.map((t) => (t.id === todoId ? { ...t, dueDate: dueDate || null } : t)),
+      todos: todos.map((t) => (t.id === todoId ? { ...t, dueDate: dueDate || null } : t)),
     })
   }
 
   function updateTodoGroup(todoId, group) {
     onUpdate({
       ...quest,
-      todos: quest.todos.map((t) => (t.id === todoId ? { ...t, group } : t)),
+      todos: todos.map((t) => (t.id === todoId ? { ...t, group } : t)),
     })
   }
 
@@ -131,7 +139,7 @@ export default function QuestDetail({ quest, onUpdate }) {
       {/* タブヘッダー */}
       <div className="tab-header">
         {GROUPS.map((g) => {
-          const count = quest.todos.filter((t) => t.group === g.key).length
+          const count = todos.filter((t) => t.group === g.key).length
           return (
             <button
               key={g.key}

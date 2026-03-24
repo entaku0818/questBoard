@@ -29,9 +29,12 @@ export default function App() {
 
   const selectedQuest = quests.find((q) => q.id === selectedQuestId) || null
 
-  function saveQuests(next) {
-    setQuests(next)
-    localStorage.setItem(QUESTS_KEY, JSON.stringify(next))
+  function saveQuests(updater) {
+    setQuests((prev) => {
+      const next = typeof updater === 'function' ? updater(prev) : updater
+      localStorage.setItem(QUESTS_KEY, JSON.stringify(next))
+      return next
+    })
   }
 
   function addQuest() {
