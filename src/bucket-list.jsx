@@ -29,6 +29,8 @@ export default function BucketList() {
   const [showShareModal, setShowShareModal] = useState(false)
   const [userName, setUserName] = useState('あなた')
   const [avatarEmoji, setAvatarEmoji] = useState('⚔️')
+  const [deletingId, setDeletingId] = useState(null)
+  const [toast, setToast] = useState(null)
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
@@ -58,7 +60,7 @@ export default function BucketList() {
       ))
     } else {
       const newItem = {
-        id: Date.now(),
+        id: crypto.randomUUID(),
         ...form,
         title: trimmed,
         createdAt: new Date().toISOString(),
@@ -82,16 +84,28 @@ export default function BucketList() {
   }
 
   const handleDelete = (id) => {
-    if (!window.confirm('このアイテムを削除しますか？')) return
+    setDeletingId(id)
+  }
+
+  const confirmDelete = (id) => {
     setItems(items.filter((item) => item.id !== id))
+    setDeletingId(null)
+  }
+
+  const showToast = (msg) => {
+    setToast(msg)
+    setTimeout(() => setToast(null), 2500)
   }
 
   const toggleStatus = (id) => {
-    setItems(items.map((item) => {
-      if (item.id !== id) return item
-      const next = { '未着手': '進行中', '進行中': '完了', '完了': '未着手' }
-      return { ...item, status: next[item.status] }
-    }))
+    const item = items.find((i) => i.id === id)
+    const next = { '未着手': '進行中', '進行中': '完了', '完了': '未着手' }
+    const newStatus = next[item.status]
+    setItems(items.map((i) => i.id !== id ? i : { ...i, status: newStatus }))
+    // E-07: フィルター中にステータス変更して消える場合にフィードバック
+    if (filterStatus !== 'すべて' && filterStatus !== newStatus) {
+      showToast(`「${item.title}」を「${newStatus}」に変更しました（フィルターにより非表示）`)
+    }
   }
 
   const filtered = items.filter((item) => {
@@ -104,6 +118,7 @@ export default function BucketList() {
 
   return (
     <div className="bucket-list">
+      {toast && <div className="bucket-toast">{toast}</div>}
       <div className="bucket-list__header">
         <h2>やりたいことリスト</h2>
         <p className="bucket-list__progress">
@@ -190,7 +205,14 @@ export default function BucketList() {
               </div>
               <div className="bucket-list__item-actions">
                 <button className="btn btn--icon" onClick={() => handleEdit(item)} title="編集">✏️</button>
-                <button className="btn btn--icon" onClick={() => handleDelete(item.id)} title="削除">🗑️</button>
+                {deletingId === item.id ? (
+                  <span className="bucket-delete-confirm">
+                    <button className="delete-confirm-yes" onClick={() => confirmDelete(item.id)}>削除</button>
+                    <button className="delete-confirm-no" onClick={() => setDeletingId(null)}>戻る</button>
+                  </span>
+                ) : (
+                  <button className="btn btn--icon" onClick={() => handleDelete(item.id)} title="削除">🗑️</button>
+                )}
               </div>
             </li>
           ))}
