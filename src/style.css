@@ -22,8 +22,9 @@ body {
 
 /* Sidebar */
 .sidebar {
-  width: 280px;
+  width: 30%;
   min-width: 240px;
+  max-width: 320px;
   background: #12121f;
   border-right: 1px solid #2a2a4a;
   display: flex;
@@ -818,6 +819,7 @@ button:hover { background: #4040dd; }
   --accent-border: rgba(90, 90, 255, 0.3);
   --code-bg: #1a1a2e;
   --shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --text-muted: #666;
 }
 
 /* ═══════════════════════════════════════════════════════
