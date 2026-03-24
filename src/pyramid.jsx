@@ -21,12 +21,14 @@ export default function Pyramid() {
   const [activeTier, setActiveTier] = useState(null)
   const [inputText, setInputText] = useState('')
   const [editTarget, setEditTarget] = useState(null) // { tier, id }
+  const [deletingItem, setDeletingItem] = useState(null) // { tier, id }
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
   }, [data])
 
   const handleAddClick = (tierId) => {
+    if (activeTier === tierId) return
     setActiveTier(tierId)
     setInputText('')
     setEditTarget(null)
@@ -50,7 +52,7 @@ export default function Pyramid() {
         ),
       }))
     } else {
-      const newItem = { id: Date.now(), text: trimmed, createdAt: new Date().toISOString() }
+      const newItem = { id: crypto.randomUUID(), text: trimmed, createdAt: new Date().toISOString() }
       setData((prev) => ({
         ...prev,
         [activeTier]: [...prev[activeTier], newItem],
@@ -62,11 +64,16 @@ export default function Pyramid() {
   }
 
   const handleDelete = (tierId, itemId) => {
-    if (!window.confirm('削除しますか？')) return
+    setDeletingItem({ tier: tierId, id: itemId })
+  }
+
+  const confirmDelete = () => {
+    if (!deletingItem) return
     setData((prev) => ({
       ...prev,
-      [tierId]: prev[tierId].filter((item) => item.id !== itemId),
+      [deletingItem.tier]: prev[deletingItem.tier].filter((item) => item.id !== deletingItem.id),
     }))
+    setDeletingItem(null)
   }
 
   const handleKeyDown = (e) => {
@@ -151,13 +158,20 @@ export default function Pyramid() {
                           >
                             ✏️
                           </button>
-                          <button
-                            className="btn btn--icon btn--sm"
-                            onClick={() => handleDelete(tier.id, item.id)}
-                            title="削除"
-                          >
-                            🗑️
-                          </button>
+                          {deletingItem?.tier === tier.id && deletingItem?.id === item.id ? (
+                            <span className="pyramid-delete-confirm">
+                              <button className="delete-confirm-yes" onClick={confirmDelete}>削除</button>
+                              <button className="delete-confirm-no" onClick={() => setDeletingItem(null)}>戻る</button>
+                            </span>
+                          ) : (
+                            <button
+                              className="btn btn--icon btn--sm"
+                              onClick={() => handleDelete(tier.id, item.id)}
+                              title="削除"
+                            >
+                              🗑️
+                            </button>
+                          )}
                         </div>
                       </li>
                     ))}

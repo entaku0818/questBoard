@@ -1162,3 +1162,10 @@ button:hover { background: #4040dd; }
   gap: 4px;
   align-items: center;
 }
+
+/* Pyramid: インライン削除確認 */
+.pyramid-delete-confirm {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
