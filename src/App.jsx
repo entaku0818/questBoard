@@ -40,24 +40,26 @@ export default function App() {
   function addQuest() {
     const title = newQuestTitle.trim()
     if (!title) return
+    const id = crypto.randomUUID()
     const quest = {
-      id: Date.now().toString(),
+      id,
       title,
       description: '',
       todos: [],
       createdAt: new Date().toISOString(),
     }
-    saveQuests([...quests, quest])
+    saveQuests((prev) => [...prev, quest])
     setNewQuestTitle('')
-    setSelectedQuestId(quest.id)
+    setSelectedQuestId(id)
   }
 
-  function updateQuest(updatedQuest) {
-    saveQuests(quests.map((q) => (q.id === updatedQuest.id ? updatedQuest : q)))
+  // functional updater インターフェース — stale prop spread を防ぐ (B-06)
+  function updateQuest(questId, updater) {
+    saveQuests((prev) => prev.map((q) => (q.id === questId ? updater(q) : q)))
   }
 
   function deleteQuest(questId) {
-    saveQuests(quests.filter((q) => q.id !== questId))
+    saveQuests((prev) => prev.filter((q) => q.id !== questId))
     if (selectedQuestId === questId) setSelectedQuestId(null)
   }
 
