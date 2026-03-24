@@ -16,13 +16,13 @@ function loadQuests() {
 }
 
 const PAGES = [
-  { key: 'quests', label: '⚔️ クエスト' },
   { key: 'bucket', label: '🪣 やりたいこと' },
+  { key: 'quests', label: '⚔️ クエスト' },
   { key: 'pyramid', label: '🔺 目標ピラミッド' },
 ]
 
 export default function App() {
-  const [page, setPage] = useState('quests')
+  const [page, setPage] = useState('bucket')
   const [quests, setQuests] = useState(loadQuests)
   const [selectedQuestId, setSelectedQuestId] = useState(null)
   const [newQuestTitle, setNewQuestTitle] = useState('')
@@ -116,7 +116,7 @@ export default function App() {
       )}
 
       {page === 'bucket' && (
-        <div className="page-content">
+        <div className="page-content page-content--full">
           <BucketList />
         </div>
       )}

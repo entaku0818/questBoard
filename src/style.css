@@ -299,6 +299,11 @@ button:hover { background: #4040dd; }
   margin: 0 auto;
 }
 
+.page-content--full {
+  max-width: 100%;
+  padding: 24px 32px;
+}
+
 /* ═══════════════════════════════════════════════════════
    BucketList スタイル
    ═══════════════════════════════════════════════════════ */
