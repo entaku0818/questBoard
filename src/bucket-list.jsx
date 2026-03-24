@@ -31,6 +31,10 @@ export default function BucketList() {
   const [avatarEmoji, setAvatarEmoji] = useState('⚔️')
   const [deletingId, setDeletingId] = useState(null)
   const [toast, setToast] = useState(null)
+  const [onboarding, setOnboarding] = useState(() => {
+    return localStorage.getItem('questboard-onboarding-done') !== 'true'
+  })
+  const [rapidInput, setRapidInput] = useState('')
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
@@ -115,6 +119,99 @@ export default function BucketList() {
   })
 
   const completedCount = items.filter((i) => i.status === '完了').length
+
+  function finishOnboarding() {
+    localStorage.setItem('questboard-onboarding-done', 'true')
+    setOnboarding(false)
+  }
+
+  function addRapidItem() {
+    const title = rapidInput.trim()
+    if (!title) return
+    setItems((prev) => [...prev, {
+      id: crypto.randomUUID(),
+      title,
+      category: 'その他',
+      deadline: '',
+      notes: '',
+      status: '未着手',
+      createdAt: new Date().toISOString(),
+    }])
+    setRapidInput('')
+  }
+
+  if (onboarding) {
+    return (
+      <div className="onboarding">
+        <div className="onboarding__inner">
+          <div className="onboarding__hero">
+            <span className="onboarding__emoji">🪣</span>
+            <h1 className="onboarding__title">死ぬまでにやりたいこと<br />100個書いてみよう</h1>
+            <p className="onboarding__sub">
+              細かいことは後で決めればいい。<br />まず思いつくままに書き出してみよう。
+            </p>
+          </div>
+
+          <div className="onboarding__counter">
+            <span className="onboarding__count-num">{items.length}</span>
+            <span className="onboarding__count-label"> / 100</span>
+          </div>
+
+          <div className="onboarding__bar-wrap">
+            <div
+              className="onboarding__bar"
+              style={{ width: `${Math.min((items.length / 100) * 100, 100)}%` }}
+            />
+          </div>
+
+          <div className="onboarding__input-wrap">
+            <input
+              className="onboarding__input"
+              type="text"
+              placeholder="例: 富士山に登る、英語を話せるようになる..."
+              value={rapidInput}
+              onChange={(e) => setRapidInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && addRapidItem()}
+              maxLength={100}
+              autoFocus
+            />
+            <button className="onboarding__add-btn" onClick={addRapidItem}>追加</button>
+          </div>
+          <p className="onboarding__hint">Enterで次々追加できます</p>
+
+          {items.length > 0 && (
+            <ul className="onboarding__list">
+              {[...items].reverse().slice(0, 10).map((item) => (
+                <li key={item.id} className="onboarding__list-item">
+                  <span>⬜</span> {item.title}
+                </li>
+              ))}
+              {items.length > 10 && (
+                <li className="onboarding__list-more">他 {items.length - 10} 件</li>
+              )}
+            </ul>
+          )}
+
+          <button
+            className="onboarding__done-btn"
+            onClick={finishOnboarding}
+            disabled={items.length === 0}
+          >
+            {items.length >= 100
+              ? '🏆 100個達成！リストを見る'
+              : items.length > 0
+              ? `${items.length}個書いた — リストへ進む →`
+              : 'まず1つ書いてみよう'}
+          </button>
+          {items.length > 0 && items.length < 100 && (
+            <p className="onboarding__encourage">
+              あと{100 - items.length}個！思いついたものをどんどん書こう
+            </p>
+          )}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="bucket-list">
