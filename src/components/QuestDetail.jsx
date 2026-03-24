@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import QuestShareCard from './QuestShareCard.jsx'
 
 const GROUPS = [
   { key: 'today', label: '📅 今日', color: '#e74c3c' },
@@ -34,6 +35,7 @@ export default function QuestDetail({ quest, onUpdate }) {
   const [titleError, setTitleError] = useState(false)
   const [editingTodoId, setEditingTodoId] = useState(null)
   const [editingTodoText, setEditingTodoText] = useState('')
+  const [showShare, setShowShare] = useState(false)
   const newTodoInputRef = useRef(null)
 
   // B-01, B-04, B-08: クエスト切り替え時に全 state をリセット
@@ -46,6 +48,7 @@ export default function QuestDetail({ quest, onUpdate }) {
     setNewTodoDue('')
     setTitleError(false)
     setEditingTodoId(null)
+    setShowShare(false)
   }, [quest.id])
 
   const todos = quest.todos ?? [] // B-07: null/undefined guard
@@ -165,10 +168,19 @@ export default function QuestDetail({ quest, onUpdate }) {
             </div>
           </div>
         ) : (
-          <div className="title-display" onClick={() => setIsEditingTitle(true)}>
-            <h2>{quest.title}</h2>
-            {quest.description && <p className="quest-desc">{quest.description}</p>}
-            <span className="edit-hint">クリックして編集</span>
+          <div className="title-display-wrap">
+            <div className="title-display" onClick={() => setIsEditingTitle(true)}>
+              <h2>{quest.title}</h2>
+              {quest.description && <p className="quest-desc">{quest.description}</p>}
+              <span className="edit-hint">クリックして編集</span>
+            </div>
+            <button
+              className="share-quest-btn"
+              onClick={() => setShowShare(true)}
+              title="クエストをシェア"
+            >
+              🎴 シェア
+            </button>
           </div>
         )}
         <div className="progress-section">
@@ -331,6 +343,10 @@ export default function QuestDetail({ quest, onUpdate }) {
             )
           })}
         </ul>
+      )}
+
+      {showShare && (
+        <QuestShareCard quest={quest} onClose={() => setShowShare(false)} />
       )}
     </div>
   )

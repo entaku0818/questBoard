@@ -1169,3 +1169,189 @@ button:hover { background: #4040dd; }
   gap: 4px;
   align-items: center;
 }
+
+/* ===== QuestShareCard ===== */
+.title-display-wrap {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.title-display-wrap .title-display {
+  flex: 1;
+}
+
+.share-quest-btn {
+  flex-shrink: 0;
+  background: rgba(170, 59, 255, 0.15);
+  border: 1px solid rgba(170, 59, 255, 0.4);
+  color: #c084fc;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+.share-quest-btn:hover {
+  background: rgba(170, 59, 255, 0.3);
+  color: #e9d5ff;
+}
+
+.quest-share-card {
+  position: relative;
+  background: linear-gradient(145deg, #12002b 0%, #1e1b4b 45%, #0c1a35 100%);
+  border-radius: 16px;
+  padding: 24px;
+  color: #fff;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.quest-share-card__glow {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.quest-share-card__glow--top {
+  top: -40px; right: -40px;
+  width: 160px; height: 160px;
+  background: radial-gradient(circle, rgba(170,59,255,0.3) 0%, transparent 65%);
+}
+
+.quest-share-card__glow--bottom {
+  bottom: -30px; left: -30px;
+  width: 120px; height: 120px;
+  background: radial-gradient(circle, rgba(59,130,246,0.2) 0%, transparent 65%);
+}
+
+.quest-share-card__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.quest-share-card__icon {
+  font-size: 28px;
+}
+
+.quest-share-card__title {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.quest-share-card__desc {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 2px;
+}
+
+.quest-share-card__brand {
+  margin-left: auto;
+  font-size: 0.7rem;
+  color: #4b5563;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.quest-share-card__progress-box {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+
+.quest-share-card__progress-nums {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.quest-share-card__pct-num {
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.quest-share-card__pct-unit {
+  font-size: 1rem;
+  color: #9ca3af;
+}
+
+.quest-share-card__done-label {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  margin-left: 4px;
+}
+
+.quest-share-card__bar-wrap {
+  width: 100%;
+  height: 6px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.quest-share-card__bar {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.quest-share-card__complete-badge {
+  margin-top: 8px;
+  font-size: 0.875rem;
+  color: #10b981;
+  font-weight: 600;
+}
+
+.quest-share-card__todos {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.quest-share-card__todo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 6px;
+  font-size: 0.875rem;
+}
+
+.quest-share-card__todo.done .quest-share-card__todo-text {
+  text-decoration: line-through;
+  color: #6b7280;
+}
+
+.quest-share-card__todo-text {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.quest-share-card__todo-more {
+  font-size: 0.75rem;
+  color: #6b7280;
+  text-align: right;
+  padding: 0 4px;
+}
+
+.quest-share-card__footer {
+  font-size: 0.7rem;
+  color: #4b5563;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  padding-top: 10px;
+  margin-top: 4px;
+}
