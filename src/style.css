@@ -1547,3 +1547,114 @@ button:hover { background: #4040dd; }
   margin: -12px 0 0;
   text-align: center;
 }
+
+/* ===== BucketList: アクションパネル ===== */
+.bucket-list__item-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+}
+
+.bucket-list__action-badge {
+  font-size: 0.75rem;
+  color: #c084fc;
+  background: rgba(170,59,255,0.15);
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+
+.bucket-list__actions-panel {
+  margin-top: 10px;
+  padding: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 10px;
+}
+
+.bucket-list__action-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bucket-list__action-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: rgba(255,255,255,0.8);
+}
+
+.bucket-list__action-item.done .action-text {
+  text-decoration: line-through;
+  color: rgba(255,255,255,0.3);
+}
+
+.action-check-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.action-text {
+  flex: 1;
+}
+
+.action-delete-btn {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.2);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0 4px;
+  flex-shrink: 0;
+}
+
+.action-delete-btn:hover {
+  color: #e74c3c;
+}
+
+.bucket-list__action-input {
+  display: flex;
+  gap: 6px;
+}
+
+.bucket-list__action-input input {
+  flex: 1;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 0.875rem;
+  padding: 6px 10px;
+  outline: none;
+}
+
+.bucket-list__action-input input:focus {
+  border-color: #aa3bff;
+}
+
+.bucket-list__action-input input::placeholder {
+  color: rgba(255,255,255,0.25);
+}
+
+.bucket-list__action-input button {
+  background: rgba(170,59,255,0.3);
+  border: 1px solid rgba(170,59,255,0.4);
+  color: #c084fc;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.bucket-list__action-input button:hover {
+  background: rgba(170,59,255,0.5);
+}

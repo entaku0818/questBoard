@@ -31,6 +31,8 @@ export default function BucketList() {
   const [avatarEmoji, setAvatarEmoji] = useState('⚔️')
   const [deletingId, setDeletingId] = useState(null)
   const [toast, setToast] = useState(null)
+  const [expandedId, setExpandedId] = useState(null)
+  const [actionInputs, setActionInputs] = useState({})
   const [onboarding, setOnboarding] = useState(() => {
     return localStorage.getItem('questboard-onboarding-done') !== 'true'
   })
@@ -106,10 +108,43 @@ export default function BucketList() {
     const next = { '未着手': '進行中', '進行中': '完了', '完了': '未着手' }
     const newStatus = next[item.status]
     setItems(items.map((i) => i.id !== id ? i : { ...i, status: newStatus }))
-    // E-07: フィルター中にステータス変更して消える場合にフィードバック
     if (filterStatus !== 'すべて' && filterStatus !== newStatus) {
       showToast(`「${item.title}」を「${newStatus}」に変更しました（フィルターにより非表示）`)
     }
+  }
+
+  // アクション（TODO）操作
+  function addAction(itemId) {
+    const text = (actionInputs[itemId] || '').trim()
+    if (!text) return
+    setItems(items.map((i) => i.id !== itemId ? i : {
+      ...i,
+      actions: [...(i.actions ?? []), { id: crypto.randomUUID(), text, done: false }],
+    }))
+    setActionInputs({ ...actionInputs, [itemId]: '' })
+    // アクションが入ったら自動で「進行中」に
+    setItems((prev) => prev.map((i) => {
+      if (i.id !== itemId || i.status !== '未着手') return i
+      return { ...i, status: '進行中' }
+    }))
+  }
+
+  function toggleAction(itemId, actionId) {
+    setItems((prev) => prev.map((i) => {
+      if (i.id !== itemId) return i
+      const actions = (i.actions ?? []).map((a) =>
+        a.id !== actionId ? a : { ...a, done: !a.done }
+      )
+      const allDone = actions.length > 0 && actions.every((a) => a.done)
+      return { ...i, actions, status: allDone ? '完了' : actions.some((a) => a.done) ? '進行中' : i.status }
+    }))
+  }
+
+  function deleteAction(itemId, actionId) {
+    setItems(items.map((i) => i.id !== itemId ? i : {
+      ...i,
+      actions: (i.actions ?? []).filter((a) => a.id !== actionId),
+    }))
   }
 
   const filtered = items.filter((item) => {
@@ -286,31 +321,67 @@ export default function BucketList() {
         <ul className="bucket-list__items">
           {filtered.map((item) => (
             <li key={item.id} className={`bucket-list__item bucket-list__item--${item.status === '完了' ? 'done' : 'active'}`}>
-              <button className="bucket-list__status-btn" onClick={() => toggleStatus(item.id)} title="ステータスを変更">
-                {item.status === '完了' ? '✅' : item.status === '進行中' ? '🔄' : '⬜'}
-              </button>
-              <div className="bucket-list__item-body">
-                <span className="bucket-list__item-title">{item.title}</span>
-                <div className="bucket-list__item-meta">
-                  <span className="bucket-list__tag">{item.category}</span>
-                  <span className={`bucket-list__tag bucket-list__tag--status-${item.status === '完了' ? 'done' : item.status === '進行中' ? 'wip' : 'todo'}`}>
-                    {item.status}
-                  </span>
-                  {item.deadline && <span className="bucket-list__deadline">📅 {item.deadline}</span>}
+              <div className="bucket-list__item-main">
+                <button className="bucket-list__status-btn" onClick={() => toggleStatus(item.id)} title="ステータスを変更">
+                  {item.status === '完了' ? '✅' : item.status === '進行中' ? '🔄' : '⬜'}
+                </button>
+                <div className="bucket-list__item-body" onClick={() => setExpandedId(expandedId === item.id ? null : item.id)} style={{ cursor: 'pointer' }}>
+                  <span className="bucket-list__item-title">{item.title}</span>
+                  <div className="bucket-list__item-meta">
+                    <span className="bucket-list__tag">{item.category}</span>
+                    <span className={`bucket-list__tag bucket-list__tag--status-${item.status === '完了' ? 'done' : item.status === '進行中' ? 'wip' : 'todo'}`}>
+                      {item.status}
+                    </span>
+                    {item.deadline && <span className="bucket-list__deadline">📅 {item.deadline}</span>}
+                    {(item.actions ?? []).length > 0 && (
+                      <span className="bucket-list__action-badge">
+                        ⚡ {(item.actions ?? []).filter((a) => a.done).length}/{(item.actions ?? []).length}
+                      </span>
+                    )}
+                  </div>
                 </div>
-                {item.notes && <p className="bucket-list__notes">{item.notes}</p>}
+                <div className="bucket-list__item-actions">
+                  <button className="btn btn--icon" onClick={() => setExpandedId(expandedId === item.id ? null : item.id)} title="アクションを見る">
+                    {expandedId === item.id ? '▲' : '▼'}
+                  </button>
+                  <button className="btn btn--icon" onClick={() => handleEdit(item)} title="編集">✏️</button>
+                  {deletingId === item.id ? (
+                    <span className="bucket-delete-confirm">
+                      <button className="delete-confirm-yes" onClick={() => confirmDelete(item.id)}>削除</button>
+                      <button className="delete-confirm-no" onClick={() => setDeletingId(null)}>戻る</button>
+                    </span>
+                  ) : (
+                    <button className="btn btn--icon" onClick={() => handleDelete(item.id)} title="削除">🗑️</button>
+                  )}
+                </div>
               </div>
-              <div className="bucket-list__item-actions">
-                <button className="btn btn--icon" onClick={() => handleEdit(item)} title="編集">✏️</button>
-                {deletingId === item.id ? (
-                  <span className="bucket-delete-confirm">
-                    <button className="delete-confirm-yes" onClick={() => confirmDelete(item.id)}>削除</button>
-                    <button className="delete-confirm-no" onClick={() => setDeletingId(null)}>戻る</button>
-                  </span>
-                ) : (
-                  <button className="btn btn--icon" onClick={() => handleDelete(item.id)} title="削除">🗑️</button>
-                )}
-              </div>
+
+              {expandedId === item.id && (
+                <div className="bucket-list__actions-panel">
+                  <ul className="bucket-list__action-list">
+                    {(item.actions ?? []).map((action) => (
+                      <li key={action.id} className={`bucket-list__action-item ${action.done ? 'done' : ''}`}>
+                        <button className="action-check-btn" onClick={() => toggleAction(item.id, action.id)}>
+                          {action.done ? '✅' : '⬜'}
+                        </button>
+                        <span className="action-text">{action.text}</span>
+                        <button className="action-delete-btn" onClick={() => deleteAction(item.id, action.id)}>×</button>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="bucket-list__action-input">
+                    <input
+                      type="text"
+                      placeholder="アクションを追加... (Enter)"
+                      value={actionInputs[item.id] || ''}
+                      onChange={(e) => setActionInputs({ ...actionInputs, [item.id]: e.target.value })}
+                      onKeyDown={(e) => e.key === 'Enter' && addAction(item.id)}
+                      maxLength={100}
+                    />
+                    <button onClick={() => addAction(item.id)}>追加</button>
+                  </div>
+                </div>
+              )}
             </li>
           ))}
         </ul>
