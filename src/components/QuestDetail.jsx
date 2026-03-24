@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 const GROUPS = [
   { key: 'today', label: '📅 今日', color: '#e74c3c' },
@@ -31,17 +31,27 @@ export default function QuestDetail({ quest, onUpdate }) {
   const [isEditingTitle, setIsEditingTitle] = useState(false)
   const [titleInput, setTitleInput] = useState(quest.title)
   const [descInput, setDescInput] = useState(quest.description || '')
+  const [titleError, setTitleError] = useState(false)
+  const [editingTodoId, setEditingTodoId] = useState(null)
+  const [editingTodoText, setEditingTodoText] = useState('')
+  const newTodoInputRef = useRef(null)
 
+  // B-01, B-04, B-08: クエスト切り替え時に全 state をリセット
   useEffect(() => {
     setTitleInput(quest.title)
     setDescInput(quest.description || '')
     setIsEditingTitle(false)
     setActiveTab('today')
+    setNewTodoText('')
+    setNewTodoDue('')
+    setTitleError(false)
+    setEditingTodoId(null)
   }, [quest.id])
 
-  const todos = quest.todos ?? []
+  const todos = quest.todos ?? [] // B-07: null/undefined guard
   const totalProgress = calcProgress(todos)
   const tabTodos = todos.filter((t) => t.group === activeTab)
+  const tabIncomplete = tabTodos.filter((t) => !t.done).length // E-09: 未完了のみカウント
   const tabDone = tabTodos.filter((t) => t.done).length
   const tabProgress = tabTodos.length === 0 ? 0 : Math.round((tabDone / tabTodos.length) * 100)
   const currentGroup = GROUPS.find((g) => g.key === activeTab)
@@ -49,48 +59,78 @@ export default function QuestDetail({ quest, onUpdate }) {
   function addTodo() {
     const text = newTodoText.trim()
     if (!text) return
+    const id = crypto.randomUUID()
     const todo = {
-      id: Date.now().toString(),
+      id,
       text,
       group: activeTab,
       dueDate: newTodoDue || null,
       done: false,
       createdAt: new Date().toISOString(),
     }
-    onUpdate({ ...quest, todos: [...todos, todo] })
+    // B-06: functional updater でstale prop防止
+    onUpdate(quest.id, (q) => ({ ...q, todos: [...(q.todos ?? []), todo] }))
     setNewTodoText('')
     setNewTodoDue('')
+    // U-06: TODO追加後にフォーカスを戻す
+    setTimeout(() => newTodoInputRef.current?.focus(), 0)
   }
 
   function toggleTodo(todoId) {
-    onUpdate({
-      ...quest,
-      todos: todos.map((t) => (t.id === todoId ? { ...t, done: !t.done } : t)),
-    })
+    onUpdate(quest.id, (q) => ({
+      ...q,
+      todos: (q.todos ?? []).map((t) => (t.id === todoId ? { ...t, done: !t.done } : t)),
+    }))
   }
 
   function deleteTodo(todoId) {
-    onUpdate({ ...quest, todos: todos.filter((t) => t.id !== todoId) })
+    onUpdate(quest.id, (q) => ({
+      ...q,
+      todos: (q.todos ?? []).filter((t) => t.id !== todoId),
+    }))
+  }
+
+  function saveTodoText(todoId) {
+    const text = editingTodoText.trim()
+    if (!text) { setEditingTodoId(null); return }
+    onUpdate(quest.id, (q) => ({
+      ...q,
+      todos: (q.todos ?? []).map((t) => (t.id === todoId ? { ...t, text } : t)),
+    }))
+    setEditingTodoId(null)
   }
 
   function updateTodoDue(todoId, dueDate) {
-    onUpdate({
-      ...quest,
-      todos: todos.map((t) => (t.id === todoId ? { ...t, dueDate: dueDate || null } : t)),
-    })
+    onUpdate(quest.id, (q) => ({
+      ...q,
+      todos: (q.todos ?? []).map((t) => (t.id === todoId ? { ...t, dueDate: dueDate || null } : t)),
+    }))
   }
 
   function updateTodoGroup(todoId, group) {
-    onUpdate({
-      ...quest,
-      todos: todos.map((t) => (t.id === todoId ? { ...t, group } : t)),
-    })
+    onUpdate(quest.id, (q) => ({
+      ...q,
+      todos: (q.todos ?? []).map((t) => (t.id === todoId ? { ...t, group } : t)),
+    }))
   }
 
   function saveTitle() {
     const title = titleInput.trim()
-    if (title) onUpdate({ ...quest, title, description: descInput })
+    if (!title) {
+      setTitleError(true) // B-02: 空タイトルのフィードバック
+      return
+    }
+    onUpdate(quest.id, (q) => ({ ...q, title, description: descInput }))
     setIsEditingTitle(false)
+    setTitleError(false)
+  }
+
+  function cancelTitleEdit() {
+    // U-08: キャンセルで元の値に戻す
+    setTitleInput(quest.title)
+    setDescInput(quest.description || '')
+    setIsEditingTitle(false)
+    setTitleError(false)
   }
 
   return (
@@ -100,20 +140,29 @@ export default function QuestDetail({ quest, onUpdate }) {
         {isEditingTitle ? (
           <div className="title-edit">
             <input
-              className="title-input"
+              className={`title-input ${titleError ? 'input-error' : ''}`}
               value={titleInput}
-              onChange={(e) => setTitleInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && saveTitle()}
+              onChange={(e) => { setTitleInput(e.target.value); setTitleError(false) }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') saveTitle()
+                if (e.key === 'Escape') cancelTitleEdit()
+              }}
+              maxLength={100}
               autoFocus
             />
+            {titleError && <p className="field-error">タイトルは必須です</p>}
             <textarea
               className="desc-input"
               placeholder="クエストの説明（任意）"
               value={descInput}
               onChange={(e) => setDescInput(e.target.value)}
               rows={2}
+              maxLength={500}
             />
-            <button onClick={saveTitle}>保存</button>
+            <div className="title-edit-actions">
+              <button onClick={saveTitle}>保存</button>
+              <button className="cancel-btn" onClick={cancelTitleEdit}>キャンセル</button>
+            </div>
           </div>
         ) : (
           <div className="title-display" onClick={() => setIsEditingTitle(true)}>
@@ -139,21 +188,22 @@ export default function QuestDetail({ quest, onUpdate }) {
       {/* タブヘッダー */}
       <div className="tab-header">
         {GROUPS.map((g) => {
-          const count = todos.filter((t) => t.group === g.key).length
+          const incomplete = todos.filter((t) => t.group === g.key && !t.done).length
           return (
             <button
               key={g.key}
               className={`tab-btn ${activeTab === g.key ? 'active' : ''}`}
               style={{ '--tab-accent': g.color }}
               onClick={() => setActiveTab(g.key)}
+              aria-selected={activeTab === g.key}
             >
               {g.label}
-              {count > 0 && (
+              {incomplete > 0 && (
                 <span
                   className="tab-badge"
                   style={{ background: activeTab === g.key ? g.color : undefined }}
                 >
-                  {count}
+                  {incomplete}
                 </span>
               )}
             </button>
@@ -174,16 +224,19 @@ export default function QuestDetail({ quest, onUpdate }) {
       </div>
       <span className="tab-progress-label">
         {tabDone}/{tabTodos.length} 完了 ({tabProgress}%)
+        {tabIncomplete > 0 && <span className="tab-remaining"> · 残り{tabIncomplete}件</span>}
       </span>
 
       {/* インライン追加フォーム */}
       <div className="add-todo-inline">
         <input
+          ref={newTodoInputRef}
           type="text"
           placeholder={`${currentGroup.label} に追加...`}
           value={newTodoText}
           onChange={(e) => setNewTodoText(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && addTodo()}
+          maxLength={200}
         />
         <input
           type="date"
@@ -205,17 +258,42 @@ export default function QuestDetail({ quest, onUpdate }) {
         <ul className="todo-list-v2">
           {tabTodos.map((todo) => {
             const dueInfo = formatDue(todo.dueDate)
+            const isEditing = editingTodoId === todo.id
             return (
               <li key={todo.id} className={`todo-item-v2 ${todo.done ? 'done' : ''}`}>
                 <button
                   className="todo-check-btn"
                   onClick={() => toggleTodo(todo.id)}
-                  title="完了切り替え"
+                  aria-label={todo.done ? '未完了に戻す' : '完了にする'}
                 >
                   {todo.done ? '✅' : '⬜'}
                 </button>
                 <div className="todo-body">
-                  <span className="todo-text-v2">{todo.text}</span>
+                  {isEditing ? (
+                    <input
+                      className="todo-edit-input"
+                      value={editingTodoText}
+                      onChange={(e) => setEditingTodoText(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') saveTodoText(todo.id)
+                        if (e.key === 'Escape') setEditingTodoId(null)
+                      }}
+                      onBlur={() => saveTodoText(todo.id)}
+                      maxLength={200}
+                      autoFocus
+                    />
+                  ) : (
+                    <span
+                      className="todo-text-v2"
+                      onDoubleClick={() => {
+                        setEditingTodoId(todo.id)
+                        setEditingTodoText(todo.text)
+                      }}
+                      title="ダブルクリックで編集"
+                    >
+                      {todo.text}
+                    </span>
+                  )}
                   {dueInfo && (
                     <div className="todo-badges">
                       <span className={`badge badge--due ${dueInfo.cls}`}>📅 {dueInfo.text}</span>
@@ -240,7 +318,12 @@ export default function QuestDetail({ quest, onUpdate }) {
                       <option key={g.key} value={g.key}>{g.label}</option>
                     ))}
                   </select>
-                  <button className="delete-btn" onClick={() => deleteTodo(todo.id)} title="削除">
+                  <button
+                    className="delete-btn"
+                    onClick={() => deleteTodo(todo.id)}
+                    aria-label="TODOを削除"
+                    title="削除"
+                  >
                     ×
                   </button>
                 </div>
