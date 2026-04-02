@@ -56,7 +56,7 @@ function ProgressBar({ pct }) {
 import { useState } from 'react'
 
 // ── メインコンポーネント ─────────────────────────────────────────────
-export default function ShareCard({ userName = 'あなた', avatarEmoji = '⚔️', items = [] }) {
+export default function ShareCard({ userName = 'あなた', avatarEmoji = '⚔️', items = [], completedCount }) {
   const [copied, setCopied] = useState(false)
   const totalCount    = items.length
   const achievedCount = items.filter((i) => i.status === '完了').length
@@ -101,7 +101,9 @@ export default function ShareCard({ userName = 'あなた', avatarEmoji = '⚔�
       .catch(() => {/* silent fail */})
   }
 
-  const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(buildShareText())}`
+  const count = completedCount ?? achievedCount
+  const ogUrl = `https://quest-board-p3iy27582-entaku0818s-projects.vercel.app/api/og?count=${count}`
+  const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(buildShareText())}&url=${encodeURIComponent(ogUrl)}`
 
   function handleTweet() {
     console.log('share_event', { type: 'x_post' })

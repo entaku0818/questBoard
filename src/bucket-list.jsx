@@ -488,6 +488,7 @@ export default function BucketList() {
               userName={userName || 'あなた'}
               avatarEmoji={avatarEmoji || '⚔️'}
               items={items}
+              completedCount={completedCount}
             />
           </div>
         </div>
