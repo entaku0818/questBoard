@@ -39,7 +39,7 @@ const STATUS_ICON = {
 }
 
 const CATEGORY_COLOR = {
-  '旅行': '#3b82f6',
+  '旅行': '#fb923c',
   '学習': '#8b5cf6',
   '体験': '#ec4899',
   '創作': '#f97316',
@@ -49,7 +49,7 @@ const CATEGORY_COLOR = {
 
 // ── 進捗バー（純CSS、外部依存なし） ─────────────────────────────────
 function ProgressBar({ pct }) {
-  const color = pct === 100 ? '#10b981' : pct >= 50 ? '#aa3bff' : '#3b82f6'
+  const color = pct === 100 ? '#10b981' : pct >= 50 ? '#f43f5e' : '#fb923c'
   return (
     <div style={{
       width: '100%',
@@ -136,7 +136,7 @@ export default function ShareCard({ userName = 'あなた', avatarEmoji = '⚔�
         style={{
           width: '100%',
           maxWidth: '480px',
-          background: 'linear-gradient(145deg, #12002b 0%, #1e1b4b 45%, #0c1a35 100%)',
+          background: 'linear-gradient(145deg, #1a0008 0%, #1f0710 45%, #0f0008 100%)',
           borderRadius: '20px',
           padding: '28px 28px 24px',
           color: '#fff',
@@ -145,14 +145,14 @@ export default function ShareCard({ userName = 'あなた', avatarEmoji = '⚔�
           overflow: 'hidden',
           boxSizing: 'border-box',
           /* スクリーンショット撮影時に映える影 */
-          boxShadow: '0 24px 64px rgba(0,0,0,0.6), 0 0 0 1px rgba(170,59,255,0.2)',
+          boxShadow: '0 24px 64px rgba(0,0,0,0.6), 0 0 0 1px rgba(244,63,94,0.2)',
         }}
       >
         {/* 装飾: 右上グロー */}
         <div style={{
           position: 'absolute', top: '-40px', right: '-40px',
           width: '180px', height: '180px', borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(170,59,255,0.35) 0%, transparent 65%)',
+          background: 'radial-gradient(circle, rgba(244,63,94,0.35) 0%, transparent 65%)',
           pointerEvents: 'none',
         }} />
         {/* 装飾: 左下グロー */}
@@ -172,8 +172,8 @@ export default function ShareCard({ userName = 'あなた', avatarEmoji = '⚔�
             {/* アバター */}
             <div style={{
               width: '44px', height: '44px',
-              background: 'rgba(170,59,255,0.2)',
-              border: '2px solid rgba(170,59,255,0.5)',
+              background: 'rgba(244,63,94,0.2)',
+              border: '2px solid rgba(244,63,94,0.5)',
               borderRadius: '50%',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: '22px',
@@ -218,8 +218,8 @@ export default function ShareCard({ userName = 'あなた', avatarEmoji = '⚔�
             </div>
             <span style={{
               fontSize: '14px', fontWeight: 700,
-              color: pct === 100 ? '#10b981' : '#c084fc',
-              background: pct === 100 ? 'rgba(16,185,129,0.15)' : 'rgba(170,59,255,0.15)',
+              color: pct === 100 ? '#10b981' : '#f43f5e',
+              background: pct === 100 ? 'rgba(16,185,129,0.15)' : 'rgba(244,63,94,0.15)',
               padding: '3px 10px', borderRadius: '20px',
             }}>
               {pct === 100 ? '🏆 ALL DONE' : `${pct}%`}
@@ -245,10 +245,10 @@ export default function ShareCard({ userName = 'あなた', avatarEmoji = '⚔�
                     display: 'flex', alignItems: 'center', gap: '10px',
                     padding: '9px 12px',
                     background: idx === 0 && item.status !== '完了'
-                      ? 'rgba(170,59,255,0.12)'   // 一番上（次の挑戦）を薄くハイライト
+                      ? 'rgba(244,63,94,0.12)'   // 一番上（次の挑戦）を薄くハイライト
                       : 'rgba(255,255,255,0.04)',
                     border: `1px solid ${idx === 0 && item.status !== '完了'
-                      ? 'rgba(170,59,255,0.3)'
+                      ? 'rgba(244,63,94,0.3)'
                       : 'rgba(255,255,255,0.07)'}`,
                     borderRadius: '8px',
                   }}

@@ -47,19 +47,19 @@ body {
   color: #e0e0e0;
   font-size: 0.875rem;
 }
-.add-quest-form input:focus { outline: none; border-color: #5a5aff; }
+.add-quest-form input:focus { outline: none; border-color: #f43f5e; }
 
 button {
   padding: 8px 14px;
   border-radius: 6px;
   border: none;
-  background: #5a5aff;
+  background: #f43f5e;
   color: #fff;
   cursor: pointer;
   font-size: 0.875rem;
   transition: background 0.2s;
 }
-button:hover { background: #4040dd; }
+button:hover { background: #e11d48; }
 
 /* Quest list */
 .quest-list { list-style: none; padding: 8px; }
@@ -74,7 +74,7 @@ button:hover { background: #4040dd; }
   transition: background 0.15s, border-color 0.15s;
 }
 .quest-item:hover { background: #1e1e30; }
-.quest-item.selected { background: #1e1e40; border-color: #5a5aff; }
+.quest-item.selected { background: #1e1e40; border-color: #f43f5e; }
 
 .quest-item-header {
   display: flex;
@@ -100,7 +100,7 @@ button:hover { background: #4040dd; }
   overflow: hidden;
   margin-bottom: 4px;
 }
-.progress-bar { height: 100%; background: #5a5aff; border-radius: 4px; transition: width 0.3s; }
+.progress-bar { height: 100%; background: #f43f5e; border-radius: 4px; transition: width 0.3s; }
 .progress-label { font-size: 0.75rem; color: #888; }
 
 /* Main content */
@@ -129,7 +129,7 @@ button:hover { background: #4040dd; }
 .title-input, .desc-input {
   padding: 8px 12px;
   border-radius: 6px;
-  border: 1px solid #5a5aff;
+  border: 1px solid #f43f5e;
   background: #1e1e30;
   color: #e0e0e0;
   font-size: 0.95rem;
@@ -170,7 +170,7 @@ button:hover { background: #4040dd; }
   color: #e0e0e0;
   font-size: 0.875rem;
 }
-.add-todo-form input[type="text"]:focus { outline: none; border-color: #5a5aff; }
+.add-todo-form input[type="text"]:focus { outline: none; border-color: #f43f5e; }
 .add-todo-form select, .add-todo-form input[type="date"] {
   padding: 8px 10px;
   border-radius: 6px;
@@ -180,7 +180,7 @@ button:hover { background: #4040dd; }
   font-size: 0.875rem;
   cursor: pointer;
 }
-.add-todo-form select:focus, .add-todo-form input[type="date"]:focus { outline: none; border-color: #5a5aff; }
+.add-todo-form select:focus, .add-todo-form input[type="date"]:focus { outline: none; border-color: #f43f5e; }
 
 /* TODO groups */
 .todo-groups { display: flex; flex-direction: column; gap: 24px; }
@@ -219,7 +219,7 @@ button:hover { background: #4040dd; }
   width: 18px;
   height: 18px;
   flex-shrink: 0;
-  accent-color: #5a5aff;
+  accent-color: #f43f5e;
   cursor: pointer;
 }
 .todo-text { flex: 1; font-size: 0.9rem; }
@@ -252,7 +252,7 @@ button:hover { background: #4040dd; }
   width: 130px;
   cursor: pointer;
 }
-.due-input:focus { outline: none; border-color: #5a5aff; }
+.due-input:focus { outline: none; border-color: #f43f5e; }
 
 .group-select {
   padding: 4px 6px;
@@ -288,7 +288,7 @@ button:hover { background: #4040dd; }
   transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 .app-nav-btn:hover { background: #1e1e30; color: #e0e0e0; }
-.app-nav-btn.active { background: #5a5aff; color: #fff; border-color: #5a5aff; }
+.app-nav-btn.active { background: #f43f5e; color: #fff; border-color: #f43f5e; }
 
 .page-content {
   flex: 1;
@@ -413,7 +413,7 @@ button:hover { background: #4040dd; }
 .pyramid__tier { width: var(--tier-width, 100%); transition: width 0.3s; }
 .pyramid__tier-shape {
   background: #1a1a2e;
-  border: 2px solid var(--tier-color, #5a5aff);
+  border: 2px solid var(--tier-color, #f43f5e);
   border-radius: 10px;
   padding: 14px 16px;
 }
@@ -857,7 +857,7 @@ button:hover { background: #4040dd; }
   --border: #2a2a4a;
   --text: #aaa;
   --text-h: #e0e0e0;
-  --accent: #5a5aff;
+  --accent: #f43f5e;
   --accent-bg: rgba(90, 90, 255, 0.1);
   --accent-border: rgba(90, 90, 255, 0.3);
   --code-bg: #1a1a2e;
@@ -1238,7 +1238,7 @@ button:hover { background: #4040dd; }
   flex-shrink: 0;
   background: rgba(170, 59, 255, 0.15);
   border: 1px solid rgba(170, 59, 255, 0.4);
-  color: #c084fc;
+  color: #fda4af;
   padding: 6px 12px;
   border-radius: 8px;
   font-size: 0.8rem;
@@ -1271,7 +1271,7 @@ button:hover { background: #4040dd; }
 .quest-share-card__glow--top {
   top: -40px; right: -40px;
   width: 160px; height: 160px;
-  background: radial-gradient(circle, rgba(170,59,255,0.3) 0%, transparent 65%);
+  background: radial-gradient(circle, rgba(244,63,94,0.3) 0%, transparent 65%);
 }
 
 .quest-share-card__glow--bottom {
@@ -1442,7 +1442,7 @@ button:hover { background: #4040dd; }
   font-weight: 800;
   line-height: 1.3;
   margin: 0 0 12px;
-  background: linear-gradient(135deg, #fff 0%, #c084fc 100%);
+  background: linear-gradient(135deg, #fff 0%, #fda4af 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1462,7 +1462,7 @@ button:hover { background: #4040dd; }
 }
 
 .onboarding__count-num {
-  color: #c084fc;
+  color: #fda4af;
 }
 
 .onboarding__count-label {
@@ -1480,7 +1480,7 @@ button:hover { background: #4040dd; }
 
 .onboarding__bar {
   height: 100%;
-  background: linear-gradient(90deg, #aa3bff, #3b82f6);
+  background: linear-gradient(90deg, #f43f5e, #fb923c);
   border-radius: 3px;
   transition: width 0.3s ease;
 }
@@ -1504,8 +1504,8 @@ button:hover { background: #4040dd; }
 }
 
 .onboarding__input:focus {
-  border-color: #aa3bff;
-  background: rgba(170,59,255,0.08);
+  border-color: #f43f5e;
+  background: rgba(244,63,94,0.08);
 }
 
 .onboarding__input::placeholder {
@@ -1513,7 +1513,7 @@ button:hover { background: #4040dd; }
 }
 
 .onboarding__add-btn {
-  background: #aa3bff;
+  background: #f43f5e;
   color: #fff;
   border: none;
   border-radius: 10px;
@@ -1526,7 +1526,7 @@ button:hover { background: #4040dd; }
 }
 
 .onboarding__add-btn:hover {
-  background: #9333ea;
+  background: #e11d48;
 }
 
 .onboarding__hint {
@@ -1569,7 +1569,7 @@ button:hover { background: #4040dd; }
 
 .onboarding__done-btn {
   width: 100%;
-  background: linear-gradient(135deg, #aa3bff, #3b82f6);
+  background: linear-gradient(135deg, #f43f5e, #fb923c);
   color: #fff;
   border: none;
   border-radius: 12px;
@@ -1606,8 +1606,8 @@ button:hover { background: #4040dd; }
 
 .bucket-list__action-badge {
   font-size: 0.75rem;
-  color: #c084fc;
-  background: rgba(170,59,255,0.15);
+  color: #fda4af;
+  background: rgba(244,63,94,0.15);
   border-radius: 4px;
   padding: 2px 6px;
 }
@@ -1686,7 +1686,7 @@ button:hover { background: #4040dd; }
 }
 
 .bucket-list__action-input input:focus {
-  border-color: #aa3bff;
+  border-color: #f43f5e;
 }
 
 .bucket-list__action-input input::placeholder {
@@ -1694,9 +1694,9 @@ button:hover { background: #4040dd; }
 }
 
 .bucket-list__action-input button {
-  background: rgba(170,59,255,0.3);
-  border: 1px solid rgba(170,59,255,0.4);
-  color: #c084fc;
+  background: rgba(244,63,94,0.3);
+  border: 1px solid rgba(244,63,94,0.4);
+  color: #fda4af;
   border-radius: 6px;
   padding: 6px 12px;
   font-size: 0.875rem;
@@ -1704,7 +1704,7 @@ button:hover { background: #4040dd; }
 }
 
 .bucket-list__action-input button:hover {
-  background: rgba(170,59,255,0.5);
+  background: rgba(244,63,94,0.5);
 }
 
 /* 完了時シェア促進バナー */
