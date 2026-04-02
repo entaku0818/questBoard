@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import ShareCard from './components/ShareCard.jsx'
 
 const STORAGE_KEY = 'questboard-bucket-list'
@@ -37,6 +37,8 @@ export default function BucketList() {
     return localStorage.getItem('questboard-onboarding-done') !== 'true'
   })
   const [rapidInput, setRapidInput] = useState('')
+  const [completionBanner, setCompletionBanner] = useState(null)
+  const bannerTimerRef = useRef(null)
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
@@ -112,6 +114,12 @@ export default function BucketList() {
     setTimeout(() => setToast(null), 2500)
   }
 
+  const showCompletionBanner = (questName, count) => {
+    if (bannerTimerRef.current) clearTimeout(bannerTimerRef.current)
+    setCompletionBanner({ questName, count })
+    bannerTimerRef.current = setTimeout(() => setCompletionBanner(null), 6000)
+  }
+
   const toggleStatus = (id) => {
     const item = items.find((i) => i.id === id)
     const next = { '未着手': '進行中', '進行中': '完了', '完了': '未着手' }
@@ -119,6 +127,10 @@ export default function BucketList() {
     setItems(items.map((i) => i.id !== id ? i : { ...i, status: newStatus }))
     if (filterStatus !== 'すべて' && filterStatus !== newStatus) {
       showToast(`「${item.title}」を「${newStatus}」に変更しました（フィルターにより非表示）`)
+    }
+    if (newStatus === '完了') {
+      const newCount = items.filter((i) => i.status === '完了').length + 1
+      showCompletionBanner(item.title, newCount)
     }
   }
 
@@ -139,14 +151,22 @@ export default function BucketList() {
   }
 
   function toggleAction(itemId, actionId) {
-    setItems((prev) => prev.map((i) => {
+    const updatedItems = items.map((i) => {
       if (i.id !== itemId) return i
       const actions = (i.actions ?? []).map((a) =>
         a.id !== actionId ? a : { ...a, done: !a.done }
       )
       const allDone = actions.length > 0 && actions.every((a) => a.done)
       return { ...i, actions, status: allDone ? '完了' : actions.some((a) => a.done) ? '進行中' : i.status }
-    }))
+    })
+    setItems(updatedItems)
+
+    const originalItem = items.find((i) => i.id === itemId)
+    const updatedItem = updatedItems.find((i) => i.id === itemId)
+    if (originalItem && updatedItem && originalItem.status !== '完了' && updatedItem.status === '完了') {
+      const newCount = updatedItems.filter((i) => i.status === '完了').length
+      showCompletionBanner(updatedItem.title, newCount)
+    }
   }
 
   function deleteAction(itemId, actionId) {
@@ -260,6 +280,22 @@ export default function BucketList() {
   return (
     <div className="bucket-list">
       {toast && <div className="bucket-toast">{toast}</div>}
+      {completionBanner && (
+        <div className="completion-banner">
+          <span className="completion-banner__text">
+            {completionBanner.count >= 10
+              ? `${completionBanner.count}個達成！シェアカードを更新しよう`
+              : `「${completionBanner.questName}」を達成！✨ シェアしますか？`}
+          </span>
+          <button
+            className="btn btn--primary completion-banner__cta"
+            onClick={() => { setShowShareModal(true); setCompletionBanner(null) }}
+          >
+            🎴 シェアカードを見る
+          </button>
+          <button className="completion-banner__close" onClick={() => setCompletionBanner(null)}>✕</button>
+        </div>
+      )}
       <div className="bucket-list__header">
         <h2>やりたいことリスト</h2>
         <p className="bucket-list__progress">
