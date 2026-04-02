@@ -259,10 +259,17 @@ export default function BucketList() {
       </div>
 
       <div className="bucket-list__filters">
-        <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
-          <option>すべて</option>
-          {STATUSES.map((s) => <option key={s}>{s}</option>)}
-        </select>
+        <div className="bucket-list__filter-tabs">
+          {['すべて', ...STATUSES].map((s) => (
+            <button
+              key={s}
+              className={`btn btn--filter${filterStatus === s ? ' btn--active' : ''}`}
+              onClick={() => setFilterStatus(s)}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
         <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)}>
           <option>すべて</option>
           {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
@@ -326,7 +333,7 @@ export default function BucketList() {
                   {item.status === '完了' ? '✅' : item.status === '進行中' ? '🔄' : '⬜'}
                 </button>
                 <div className="bucket-list__item-body" onClick={() => setExpandedId(expandedId === item.id ? null : item.id)} style={{ cursor: 'pointer' }}>
-                  <span className="bucket-list__item-title">{item.title}</span>
+                  <span className="bucket-list__item-title" style={item.status === '完了' ? { textDecoration: 'line-through' } : undefined}>{item.title}</span>
                   <div className="bucket-list__item-meta">
                     <span className="bucket-list__tag">{item.category}</span>
                     <span className={`bucket-list__tag bucket-list__tag--status-${item.status === '完了' ? 'done' : item.status === '進行中' ? 'wip' : 'todo'}`}>

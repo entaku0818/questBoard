@@ -313,6 +313,32 @@ button:hover { background: #4040dd; }
 .bucket-list__progress { font-size: 0.85rem; color: #888; }
 
 .bucket-list__filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+
+.bucket-list__filter-tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+
+.btn--filter {
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid #3a3a5a;
+  background: transparent;
+  color: #aaa;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.btn--filter:hover {
+  background: rgba(240,192,64,0.1);
+  color: #f0c040;
+  border-color: #f0c040;
+}
+
+.btn--filter.btn--active {
+  background: #f0c040;
+  color: #1a1a2e;
+  border-color: #f0c040;
+  font-weight: 700;
+}
 .bucket-list__filters select {
   padding: 7px 10px;
   border-radius: 6px;
@@ -1166,6 +1192,10 @@ button:hover { background: #4040dd; }
   display: flex;
   gap: 4px;
   align-items: center;
+  background: rgba(220, 53, 69, 0.15);
+  border: 1px solid rgba(220, 53, 69, 0.4);
+  border-radius: 6px;
+  padding: 3px 8px;
 }
 
 /* Pyramid: インライン削除確認 */
