@@ -1,3 +1,4 @@
+'use client'
 import { useState, useEffect, useRef } from 'react'
 import ShareCard from './components/ShareCard.jsx'
 
@@ -9,6 +10,7 @@ const STATUSES = ['未着手', '進行中', '完了']
 export default function BucketList() {
   const [items, setItems] = useState(() => {
     try {
+      if (typeof window === 'undefined') return []
       const raw = localStorage.getItem(STORAGE_KEY)
       return raw ? JSON.parse(raw) : []
     } catch {
@@ -34,6 +36,7 @@ export default function BucketList() {
   const [expandedId, setExpandedId] = useState(null)
   const [actionInputs, setActionInputs] = useState({})
   const [onboarding, setOnboarding] = useState(() => {
+    if (typeof window === 'undefined') return false
     return localStorage.getItem('questboard-onboarding-done') !== 'true'
   })
   const [rapidInput, setRapidInput] = useState('')

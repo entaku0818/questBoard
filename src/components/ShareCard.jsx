@@ -1,3 +1,4 @@
+'use client'
 /**
  * ShareCard.jsx — SNSシェア用カード
  *

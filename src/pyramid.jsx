@@ -1,3 +1,4 @@
+'use client'
 import { useState, useEffect } from 'react'
 
 const STORAGE_KEY = 'questboard-pyramid'
@@ -12,6 +13,7 @@ const TIERS = [
 export default function Pyramid() {
   const [data, setData] = useState(() => {
     try {
+      if (typeof window === 'undefined') return DEFAULT_DATA
       const raw = localStorage.getItem(STORAGE_KEY)
       return raw ? JSON.parse(raw) : DEFAULT_DATA
     } catch {
