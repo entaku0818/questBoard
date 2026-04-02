@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import BucketList from './bucket-list.jsx'
 import Pyramid from './pyramid.jsx'
 
@@ -7,8 +7,20 @@ const PAGES = [
   { key: 'pyramid', label: '🔺 目標ピラミッド' },
 ]
 
+const STATS_KEY = 'questboard-stats'
+
 export default function App() {
   const [page, setPage] = useState('bucket')
+
+  useEffect(() => {
+    const today = new Date()
+    const date = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
+    try {
+      const prev = JSON.parse(localStorage.getItem(STATS_KEY) || '{}')
+      const shareCount = prev.date === date ? (prev.shareCount ?? 0) : 0
+      localStorage.setItem(STATS_KEY, JSON.stringify({ date, dau: true, shareCount }))
+    } catch { /* silent */ }
+  }, [])
 
   return (
     <div className="app">

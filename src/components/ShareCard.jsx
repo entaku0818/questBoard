@@ -85,13 +85,28 @@ export default function ShareCard({ userName = 'あなた', avatarEmoji = '⚔�
     ].join('\n')
   }
 
+  function incrementShareCount() {
+    try {
+      const stats = JSON.parse(localStorage.getItem('questboard-stats') || '{}')
+      stats.shareCount = (stats.shareCount ?? 0) + 1
+      localStorage.setItem('questboard-stats', JSON.stringify(stats))
+    } catch { /* silent */ }
+  }
+
   function handleCopy() {
+    console.log('share_event', { type: 'copy' })
+    incrementShareCount()
     navigator.clipboard.writeText(buildShareText())
       .then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000) })
       .catch(() => {/* silent fail */})
   }
 
   const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(buildShareText())}`
+
+  function handleTweet() {
+    console.log('share_event', { type: 'x_post' })
+    incrementShareCount()
+  }
 
   // ── カード本体はすべてインラインスタイル（スクリーンショット時に確実に反映） ──
   return (
@@ -282,6 +297,7 @@ export default function ShareCard({ userName = 'あなた', avatarEmoji = '⚔�
           href={tweetUrl}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={handleTweet}
         >
           𝕏 ポストする
         </a>
