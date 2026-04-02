@@ -35,6 +35,7 @@ export default function App() {
             <button
               key={p.key}
               className={`app-nav-btn ${page === p.key ? 'active' : ''}`}
+              data-page={p.key}
               onClick={() => setPage(p.key)}
             >
               {p.label}
@@ -44,13 +45,13 @@ export default function App() {
       </header>
 
       {page === 'bucket' && (
-        <div className="page-content page-content--full">
+        <div className="page-content page-content--full page-content--bucket">
           <BucketList />
         </div>
       )}
 
       {page === 'pyramid' && (
-        <div className="page-content">
+        <div className="page-content page-content--pyramid">
           <Pyramid />
         </div>
       )}
