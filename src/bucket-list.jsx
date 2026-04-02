@@ -42,7 +42,7 @@ export default function BucketList() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
   }, [items])
 
-  // Escキーでモーダルを閉じる
+  // Escキーでシェアカードモーダルを閉じる
   useEffect(() => {
     if (!showShareModal) return
     const handler = (e) => { if (e.key === 'Escape') setShowShareModal(false) }
@@ -54,6 +54,16 @@ export default function BucketList() {
     setForm({ title: '', category: 'その他', deadline: '', notes: '', status: '未着手' })
     setEditingId(null)
   }
+
+  const closeForm = () => { resetForm(); setShowForm(false) }
+
+  // Escキーでフォームモーダルを閉じる
+  useEffect(() => {
+    if (!showForm) return
+    const handler = (e) => { if (e.key === 'Escape') closeForm() }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [showForm])
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -73,8 +83,7 @@ export default function BucketList() {
       }
       setItems([...items, newItem])
     }
-    resetForm()
-    setShowForm(false)
+    closeForm()
   }
 
   const handleEdit = (item) => {
@@ -283,41 +292,52 @@ export default function BucketList() {
       </div>
 
       {showForm && (
-        <form className="bucket-list__form" onSubmit={handleSubmit}>
-          <h3>{editingId !== null ? '編集' : '新規追加'}</h3>
-          <input
-            type="text"
-            placeholder="タイトル *"
-            value={form.title}
-            onChange={(e) => setForm({ ...form, title: e.target.value })}
-            required
-            maxLength={100}
-          />
-          <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
-            {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
-          </select>
-          <input
-            type="date"
-            value={form.deadline}
-            onChange={(e) => setForm({ ...form, deadline: e.target.value })}
-          />
-          <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })}>
-            {STATUSES.map((s) => <option key={s}>{s}</option>)}
-          </select>
-          <textarea
-            placeholder="メモ"
-            value={form.notes}
-            onChange={(e) => setForm({ ...form, notes: e.target.value })}
-            maxLength={500}
-            rows={3}
-          />
-          <div className="bucket-list__form-actions">
-            <button type="submit" className="btn btn--primary">保存</button>
-            <button type="button" className="btn" onClick={() => { resetForm(); setShowForm(false) }}>
-              キャンセル
-            </button>
+        <div
+          className="modal-overlay"
+          onClick={(e) => { if (e.target === e.currentTarget) closeForm() }}
+        >
+          <div className="modal-content modal-content--form">
+            <div className="modal-header">
+              <h3>{editingId !== null ? '編集' : '新規追加'}</h3>
+              <button className="modal-close-btn" onClick={closeForm} title="閉じる">✕</button>
+            </div>
+            <form className="bucket-list__form" onSubmit={handleSubmit}>
+              <input
+                type="text"
+                placeholder="タイトル *"
+                value={form.title}
+                onChange={(e) => setForm({ ...form, title: e.target.value })}
+                required
+                maxLength={100}
+                autoFocus
+              />
+              <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
+                {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
+              </select>
+              <input
+                type="date"
+                value={form.deadline}
+                onChange={(e) => setForm({ ...form, deadline: e.target.value })}
+              />
+              <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })}>
+                {STATUSES.map((s) => <option key={s}>{s}</option>)}
+              </select>
+              <textarea
+                placeholder="メモ"
+                value={form.notes}
+                onChange={(e) => setForm({ ...form, notes: e.target.value })}
+                maxLength={500}
+                rows={3}
+              />
+              <div className="bucket-list__form-actions">
+                <button type="submit" className="btn btn--primary">保存</button>
+                <button type="button" className="btn" onClick={closeForm}>
+                  キャンセル
+                </button>
+              </div>
+            </form>
           </div>
-        </form>
+        </div>
       )}
 
       {filtered.length === 0 ? (

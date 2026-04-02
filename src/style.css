@@ -786,6 +786,18 @@ button:hover { background: #4040dd; }
   position: relative;
 }
 
+.modal-content--form {
+  max-width: 440px;
+  min-width: 0;
+}
+
+.modal-content--form .bucket-list__form {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 16px 20px;
+}
+
 .modal-header {
   display: flex;
   align-items: center;
@@ -1033,6 +1045,12 @@ button:hover { background: #4040dd; }
   .modal-content {
     max-width: 100%;
     border-radius: 12px;
+  }
+
+  /* フォームモーダル: iPhone SE (320px) 対応 */
+  .modal-content--form {
+    max-width: 100%;
+    margin: 0 8px;
   }
 }
 
