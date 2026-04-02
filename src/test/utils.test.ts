@@ -1,14 +1,14 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 
 // ── calcProgress (QuestDetail/QuestList と同じロジック) ──────────────
-function calcProgress(todos) {
+function calcProgress(todos: Array<{ done: boolean }> | null | undefined) {
   if (!todos || todos.length === 0) return 0
   const done = todos.filter((t) => t.done).length
   return Math.round((done / todos.length) * 100)
 }
 
 // ── formatDue (QuestDetail と同じロジック) ────────────────────────────
-function formatDue(dueDate) {
+function formatDue(dueDate: string | null | undefined): { text: string; cls: string } | null {
   if (!dueDate) return null
   const today = new Date()
   today.setHours(0, 0, 0, 0)

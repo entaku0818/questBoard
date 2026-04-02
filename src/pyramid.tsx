@@ -1,5 +1,9 @@
 'use client'
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
+
+type TierId = 'dream' | 'goal' | 'task'
+type PyramidItem = { id: string; text: string }
+type PyramidData = { dream: PyramidItem[]; goal: PyramidItem[]; task: PyramidItem[] }
 
 const STORAGE_KEY = 'questboard-pyramid'
 const DEFAULT_DATA = { dream: [], goal: [], task: [] }
@@ -110,7 +114,7 @@ export default function Pyramid() {
             <div
               key={tier.id}
               className="pyramid__tier"
-              style={{ '--tier-color': tier.color, '--tier-width': `${widthPercent}%` }}
+              style={{ '--tier-color': tier.color, '--tier-width': `${widthPercent}%` } as React.CSSProperties}
             >
               <div className="pyramid__tier-shape">
                 <div className="pyramid__tier-header">

@@ -1,6 +1,20 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
-import ShareCard from './components/ShareCard.jsx'
+import ShareCard from './components/ShareCard'
+
+type Status = '未着手' | '進行中' | '完了'
+type Action = { id: string; text: string; done: boolean }
+type BucketItem = {
+  id: string
+  title: string
+  category: string
+  deadline: string
+  notes: string
+  status: Status
+  createdAt: string
+  actions?: Action[]
+}
+type CompletionBanner = { questName: string; count: number }
 
 const STORAGE_KEY = 'questboard-bucket-list'
 
@@ -8,7 +22,7 @@ const CATEGORIES = ['旅行', '学習', '体験', '創作', '健康', 'その他
 const STATUSES = ['未着手', '進行中', '完了']
 
 export default function BucketList() {
-  const [items, setItems] = useState(() => {
+  const [items, setItems] = useState<BucketItem[]>(() => {
     try {
       if (typeof window === 'undefined') return []
       const raw = localStorage.getItem(STORAGE_KEY)
@@ -31,17 +45,17 @@ export default function BucketList() {
   const [showShareModal, setShowShareModal] = useState(false)
   const [userName, setUserName] = useState('あなた')
   const [avatarEmoji, setAvatarEmoji] = useState('⚔️')
-  const [deletingId, setDeletingId] = useState(null)
-  const [toast, setToast] = useState(null)
-  const [expandedId, setExpandedId] = useState(null)
-  const [actionInputs, setActionInputs] = useState({})
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [toast, setToast] = useState<string | null>(null)
+  const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [actionInputs, setActionInputs] = useState<Record<string, string>>({})
   const [onboarding, setOnboarding] = useState(() => {
     if (typeof window === 'undefined') return false
     return localStorage.getItem('questboard-onboarding-done') !== 'true'
   })
   const [rapidInput, setRapidInput] = useState('')
-  const [completionBanner, setCompletionBanner] = useState(null)
-  const bannerTimerRef = useRef(null)
+  const [completionBanner, setCompletionBanner] = useState<CompletionBanner | null>(null)
+  const bannerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
@@ -77,13 +91,14 @@ export default function BucketList() {
 
     if (editingId !== null) {
       setItems(items.map((item) =>
-        item.id === editingId ? { ...item, ...form, title: trimmed } : item
+        item.id === editingId ? { ...item, ...form, title: trimmed, status: form.status as Status } : item
       ))
     } else {
-      const newItem = {
+      const newItem: BucketItem = {
         id: crypto.randomUUID(),
         ...form,
         title: trimmed,
+        status: form.status as Status,
         createdAt: new Date().toISOString(),
       }
       setItems([...items, newItem])
@@ -125,7 +140,7 @@ export default function BucketList() {
 
   const toggleStatus = (id) => {
     const item = items.find((i) => i.id === id)
-    const next = { '未着手': '進行中', '進行中': '完了', '完了': '未着手' }
+    const next: Record<Status, Status> = { '未着手': '進行中', '進行中': '完了', '完了': '未着手' }
     const newStatus = next[item.status]
     setItems(items.map((i) => i.id !== id ? i : { ...i, status: newStatus }))
     if (filterStatus !== 'すべて' && filterStatus !== newStatus) {

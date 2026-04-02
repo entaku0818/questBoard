@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
-import QuestList from '../components/QuestList.jsx'
+import QuestList from '../components/QuestList'
 
 const sampleQuests = [
   { id: '1', title: 'クエストA', todos: [] },

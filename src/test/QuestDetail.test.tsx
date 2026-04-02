@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
-import QuestDetail from '../components/QuestDetail.jsx'
+import QuestDetail from '../components/QuestDetail'
 
 const makeQuest = (overrides = {}) => ({
   id: 'q1',

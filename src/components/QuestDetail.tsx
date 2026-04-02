@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react'
-import QuestShareCard from './QuestShareCard.jsx'
+import React, { useState, useEffect, useRef } from 'react'
+import QuestShareCard from './QuestShareCard'
 
 const GROUPS = [
   { key: 'today', label: '📅 今日', color: '#e74c3c' },
@@ -18,7 +18,7 @@ function formatDue(dueDate) {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
   const due = new Date(dueDate + 'T00:00:00')
-  const diff = Math.floor((due - today) / (1000 * 60 * 60 * 24))
+  const diff = Math.floor((due.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
   if (diff < 0) return { text: `${Math.abs(diff)}日超過`, cls: 'due-overdue' }
   if (diff === 0) return { text: '今日が期日', cls: 'due-today' }
   if (diff === 1) return { text: '明日が期日', cls: 'due-soon' }
@@ -205,7 +205,7 @@ export default function QuestDetail({ quest, onUpdate }) {
             <button
               key={g.key}
               className={`tab-btn ${activeTab === g.key ? 'active' : ''}`}
-              style={{ '--tab-accent': g.color }}
+              style={{ '--tab-accent': g.color } as React.CSSProperties}
               onClick={() => setActiveTab(g.key)}
               aria-selected={activeTab === g.key}
             >

@@ -17,7 +17,7 @@
  *   onAdd        - (text, group, dueDate) => void
  */
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 
 const TABS = [
   { key: 'today',   label: '今日',  emoji: '🔴', accent: '#e74c3c' },
@@ -36,7 +36,7 @@ function formatDue(dueDate) {
   if (!dueDate) return null
   const today = new Date(); today.setHours(0, 0, 0, 0)
   const due = new Date(dueDate + 'T00:00:00')
-  const diff = Math.floor((due - today) / 86400000)
+  const diff = Math.floor((due.getTime() - today.getTime()) / 86400000)
   if (diff < 0)  return { text: `${Math.abs(diff)}日超過`, cls: 'due-overdue' }
   if (diff === 0) return { text: '今日',   cls: 'due-today' }
   if (diff === 1) return { text: '明日',   cls: 'due-soon' }
@@ -132,7 +132,7 @@ export default function TodoTabs({ todos = [], questTitle, onToggle, onDelete, o
               role="tab"
               aria-selected={activeTab === tab.key}
               className={`tab-btn ${activeTab === tab.key ? 'active' : ''}`}
-              style={{ '--tab-accent': tab.accent }}
+              style={{ '--tab-accent': tab.accent } as React.CSSProperties}
               onClick={() => setActiveTab(tab.key)}
             >
               <span className="tab-emoji">{tab.emoji}</span>
@@ -178,7 +178,7 @@ export default function TodoTabs({ todos = [], questTitle, onToggle, onDelete, o
         <button
           className="btn btn--primary btn--sm"
           onClick={handleAdd}
-          style={{ '--btn-bg': activeTabDef.accent }}
+          style={{ '--btn-bg': activeTabDef.accent } as React.CSSProperties}
         >
           ＋
         </button>

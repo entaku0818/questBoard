@@ -1,4 +1,19 @@
 'use client'
+
+type Status = '未着手' | '進行中' | '完了'
+type ShareItem = {
+  id: string
+  title: string
+  category: string
+  status: Status
+}
+interface ShareCardProps {
+  userName?: string
+  avatarEmoji?: string
+  items?: ShareItem[]
+  completedCount?: number
+}
+
 /**
  * ShareCard.jsx — SNSシェア用カード
  *
@@ -57,7 +72,7 @@ function ProgressBar({ pct }) {
 import { useState } from 'react'
 
 // ── メインコンポーネント ─────────────────────────────────────────────
-export default function ShareCard({ userName = 'あなた', avatarEmoji = '⚔️', items = [], completedCount }) {
+export default function ShareCard({ userName = 'あなた', avatarEmoji = '⚔️', items = [], completedCount }: ShareCardProps) {
   const [copied, setCopied] = useState(false)
   const totalCount    = items.length
   const achievedCount = items.filter((i) => i.status === '完了').length

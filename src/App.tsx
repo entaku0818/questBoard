@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
-import BucketList from './bucket-list.jsx'
-import Pyramid from './pyramid.jsx'
+import BucketList from './bucket-list'
+import Pyramid from './pyramid'
 
 const PAGES = [
   { key: 'bucket', label: '🪣 やりたいこと' },
