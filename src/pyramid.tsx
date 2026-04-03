@@ -9,9 +9,9 @@ const STORAGE_KEY = 'questboard-pyramid'
 const DEFAULT_DATA = { dream: [], goal: [], task: [] }
 
 const TIERS = [
-  { id: 'dream', label: '夢', sublabel: '長期の夢・ビジョン', color: '#aa3bff', emoji: '✨' },
-  { id: 'goal', label: '目標', sublabel: '1〜3年の目標', color: '#3b82f6', emoji: '🎯' },
-  { id: 'task', label: 'タスク', sublabel: '今すぐできること', color: '#10b981', emoji: '📝' },
+  { id: 'dream', label: '夢', sublabel: '長期の夢・ビジョン', color: '#38bdf8', emoji: '✨' },
+  { id: 'goal', label: '目標', sublabel: '1〜3年の目標', color: '#0ea5e9', emoji: '🎯' },
+  { id: 'task', label: 'タスク', sublabel: '今すぐできること', color: '#0284c7', emoji: '📝' },
 ]
 
 export default function Pyramid() {
