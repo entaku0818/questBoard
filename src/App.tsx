@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import BucketList from './bucket-list'
 import Pyramid from './pyramid'
+import AuthButton from './components/AuthButton'
 
 const PAGES = [
   { key: 'bucket', label: '🪣 やりたいこと' },
@@ -27,8 +28,11 @@ export default function App() {
     <div className="app">
       <header className="app-header">
         <div className="app-header-top">
-          <h1>🪣 やりたいことボード</h1>
-          <p className="app-subtitle">死ぬまでにやりたいことを、今日の行動に変えよう</p>
+          <div>
+            <h1>🪣 やりたいことボード</h1>
+            <p className="app-subtitle">死ぬまでにやりたいことを、今日の行動に変えよう</p>
+          </div>
+          <AuthButton />
         </div>
         <nav className="app-nav">
           {PAGES.map((p) => (
