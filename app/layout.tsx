@@ -1,6 +1,7 @@
 import '../src/style.css'
 
 export const metadata = {
+  metadataBase: new URL('https://quest-board-p3iy27582-entaku0818s-projects.vercel.app'),
   title: 'QuestBoard — やりたいことリスト・バケツリスト管理アプリ',
   description: '死ぬまでにやりたいことを、今日の行動に変えよう。バケツリスト・やりたいことリスト・TODO管理を1アプリで完結。目標ピラミッドで夢を日常に落とし込む無料Webアプリ。',
   keywords: 'やりたいことリスト,バケツリスト,TODO管理,目標管理,夢リスト,ライフリスト,人生目標,自己成長,タスク管理',
