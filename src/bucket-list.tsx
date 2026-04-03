@@ -21,6 +21,44 @@ const STORAGE_KEY = 'questboard-bucket-list'
 const CATEGORIES = ['旅行', '学習', '体験', '創作', '健康', 'その他']
 const STATUSES = ['未着手', '進行中', '完了']
 
+const GACHA_ITEMS: { title: string; category: string }[] = [
+  { title: '富士山に登る', category: '体験' },
+  { title: '海外一人旅をする', category: '旅行' },
+  { title: 'フルマラソンを完走する', category: '健康' },
+  { title: '自分のWebサービスをリリースする', category: '学習' },
+  { title: '料理教室に通う', category: '体験' },
+  { title: '外国語で日常会話をする', category: '学習' },
+  { title: 'バンジージャンプをする', category: '体験' },
+  { title: 'ダイビングのライセンスを取る', category: '体験' },
+  { title: '小説を1冊書き上げる', category: '創作' },
+  { title: 'オーロラを見る', category: '旅行' },
+  { title: '自分でイラストを描いて展示する', category: '創作' },
+  { title: '楽器を1曲弾けるようになる', category: '創作' },
+  { title: '温泉地を10カ所以上めぐる', category: '旅行' },
+  { title: '100冊本を読む', category: '学習' },
+  { title: '肉体改造して6パックを作る', category: '健康' },
+  { title: 'スカイダイビングをする', category: '体験' },
+  { title: '自家製ワインを作る', category: '体験' },
+  { title: '世界遺産を10カ所訪れる', category: '旅行' },
+  { title: '人前でスピーチをする', category: '体験' },
+  { title: '畑で野菜を育てる', category: '体験' },
+  { title: 'ヨガインストラクターの資格を取る', category: '健康' },
+  { title: '1ヶ月間SNSをやめる', category: '健康' },
+  { title: 'キャンプで満天の星空を見る', category: '旅行' },
+  { title: '手料理でコース料理を作る', category: '創作' },
+  { title: '起業する', category: '学習' },
+  { title: '映画を100本見る', category: '体験' },
+  { title: '自転車で遠出する', category: '健康' },
+  { title: '陶芸を体験する', category: '創作' },
+  { title: '子どもの頃の夢をひとつ叶える', category: 'その他' },
+  { title: '家族に手紙を書く', category: 'その他' },
+  { title: 'ボランティア活動に参加する', category: 'その他' },
+  { title: '写真集を作る', category: '創作' },
+  { title: '友人と海外旅行に行く', category: '旅行' },
+  { title: '朝5時に起きる生活を1ヶ月続ける', category: '健康' },
+  { title: '自転車日本縦断に挑戦する', category: '体験' },
+]
+
 export default function BucketList() {
   const [items, setItems] = useState<BucketItem[]>(() => {
     try {
@@ -55,6 +93,7 @@ export default function BucketList() {
   })
   const [rapidInput, setRapidInput] = useState('')
   const [completionBanner, setCompletionBanner] = useState<CompletionBanner | null>(null)
+  const [gachaSuggestion, setGachaSuggestion] = useState<{ title: string; category: string } | null>(null)
   const bannerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
@@ -340,10 +379,36 @@ export default function BucketList() {
         <button className="btn btn--primary" onClick={() => { resetForm(); setShowForm(true) }}>
           ＋ 追加
         </button>
+        <button className="btn btn--gacha" onClick={() => {
+          const unused = GACHA_ITEMS.filter(g => !items.some(i => i.title === g.title))
+          const pool = unused.length > 0 ? unused : GACHA_ITEMS
+          setGachaSuggestion(pool[Math.floor(Math.random() * pool.length)])
+        }}>
+          🎲 ガチャ
+        </button>
         <button className="btn" onClick={() => setShowShareModal(true)}>
-          🎴 シェアカードを見る
+          🎴 シェアカード
         </button>
       </div>
+
+      {gachaSuggestion && (
+        <div className="gacha-suggestion">
+          <span className="gacha-suggestion__label">🎲 こんなのどう？</span>
+          <span className="gacha-suggestion__title">{gachaSuggestion.title}</span>
+          <span className="gacha-suggestion__category">{gachaSuggestion.category}</span>
+          <button className="btn btn--primary btn--sm" onClick={() => {
+            setForm({ title: gachaSuggestion.title, category: gachaSuggestion.category, deadline: '', notes: '', status: '未着手' })
+            setGachaSuggestion(null)
+            setShowForm(true)
+          }}>追加する</button>
+          <button className="btn btn--ghost btn--sm" onClick={() => {
+            const unused = GACHA_ITEMS.filter(g => !items.some(i => i.title === g.title) && g.title !== gachaSuggestion.title)
+            const pool = unused.length > 0 ? unused : GACHA_ITEMS.filter(g => g.title !== gachaSuggestion.title)
+            setGachaSuggestion(pool[Math.floor(Math.random() * pool.length)])
+          }}>もう一回</button>
+          <button className="btn btn--ghost btn--sm" onClick={() => setGachaSuggestion(null)}>✕</button>
+        </div>
+      )}
 
       {showForm && (
         <div
