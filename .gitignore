@@ -24,3 +24,7 @@ dist-ssr
 *.sln
 *.sw?
 .vercel
+
+# Screenshots and memory (local only)
+*.png
+memory/
