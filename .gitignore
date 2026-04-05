@@ -28,3 +28,4 @@ dist-ssr
 # Screenshots and memory (local only)
 *.png
 memory/
+.env*.local
