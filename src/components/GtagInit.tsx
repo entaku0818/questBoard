@@ -13,7 +13,7 @@ export default function GtagInit({ gaId }: { gaId: string }) {
     }
     ;(window as any).gtag('consent', 'default', { analytics_storage: 'granted' })
     ;(window as any).gtag('js', new Date())
-    ;(window as any).gtag('config', gaId)
+    ;(window as any).gtag('config', gaId, { debug_mode: true })
 
     // next/script を使わず直接 DOM に追加
     const script = document.createElement('script')
