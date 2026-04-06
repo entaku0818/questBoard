@@ -1,23 +1,26 @@
-'use client'
-import Script from 'next/script'
-import { existsGaId, GA_ID } from '../lib/gtag'
+// Server Component — 'use client' 不要
+// React 18 の script ホイスティングを避けるため next/script は使わない
+// JSON-LD など他の <script> は <head> に置かないこと（appendChild エラーの原因になる）
+
+const GA_ID = process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID ?? ''
 
 export default function GoogleAnalytics() {
-  if (!existsGaId) return null
+  if (!GA_ID) return null
+
   return (
     <>
-      <Script
-        src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-        strategy="afterInteractive"
+      {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+      <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} />
+      <script
+        dangerouslySetInnerHTML={{
+          __html: [
+            'window.dataLayer=window.dataLayer||[];',
+            'function gtag(){dataLayer.push(arguments);}',
+            "gtag('js',new Date());",
+            `gtag('config','${GA_ID}');`,
+          ].join(''),
+        }}
       />
-      <Script id="ga" strategy="afterInteractive">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', '${GA_ID}');
-        `}
-      </Script>
     </>
   )
 }

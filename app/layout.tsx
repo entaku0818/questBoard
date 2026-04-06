@@ -1,4 +1,5 @@
 import '../src/style.css'
+import GoogleAnalytics from '../src/components/GoogleAnalytics'
 
 export const metadata = {
   metadataBase: new URL('https://myquestboard.entaku.app'),
@@ -25,24 +26,14 @@ export const metadata = {
   },
 }
 
-const GA_ID = process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID ?? ''
-
 export default function RootLayout({ children }) {
   return (
     <html lang="ja">
       <head>
-        {GA_ID && (
-          <>
-            {/* Google tag (gtag.js) - official implementation */}
-            {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-            <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} />
-            <script dangerouslySetInnerHTML={{
-              __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}');`
-            }} />
-          </>
-        )}
+        <GoogleAnalytics />
       </head>
       <body>
+        {/* JSON-LD は <head> に置くと React の script ホイスティングが干渉するので <body> に置く */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
