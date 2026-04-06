@@ -37,7 +37,7 @@ export default function RootLayout({ children }) {
             {/* eslint-disable-next-line @next/next/no-sync-scripts */}
             <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} />
             <script dangerouslySetInnerHTML={{
-              __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}',{'debug_mode':true});`
+              __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}');`
             }} />
           </>
         )}
