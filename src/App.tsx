@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { trackEvent } from './lib/firebase'
+import { trackEvent } from './lib/gtag'
 import BucketList from './bucket-list'
 import Pyramid from './pyramid'
 import AuthButton from './components/AuthButton'

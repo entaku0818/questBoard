@@ -1,5 +1,5 @@
 'use client'
-import { trackEvent } from '../lib/firebase'
+import { trackEvent } from '../lib/gtag'
 
 type Status = '未着手' | '進行中' | '完了'
 type ShareItem = {

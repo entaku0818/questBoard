@@ -1,5 +1,5 @@
 import '../src/style.css'
-import { GoogleAnalytics } from '@next/third-parties/google'
+import GoogleAnalytics from '../src/components/GoogleAnalytics'
 
 export const metadata = {
   metadataBase: new URL('https://myquestboard.entaku.app'),
@@ -30,6 +30,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="ja">
       <head>
+        <GoogleAnalytics />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -51,7 +52,6 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body>{children}</body>
-      <GoogleAnalytics gaId="G-G0SEE725R0" />
     </html>
   )
 }
