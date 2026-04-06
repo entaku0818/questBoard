@@ -1,6 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
-import { trackEvent } from './lib/gtag'
+import { useState } from 'react'
 import BucketList from './bucket-list'
 import Pyramid from './pyramid'
 import AuthButton from './components/AuthButton'
@@ -12,10 +11,6 @@ const PAGES = [
 
 export default function App() {
   const [page, setPage] = useState('bucket')
-
-  useEffect(() => {
-    trackEvent('page_view')
-  }, [])
 
   return (
     <div className="app">
