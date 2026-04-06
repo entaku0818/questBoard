@@ -419,6 +419,14 @@ export default function BucketList() {
             const pool = unused.length > 0 ? unused : GACHA_ITEMS.filter(g => g.title !== gachaSuggestion.title)
             setGachaSuggestion(pool[Math.floor(Math.random() * pool.length)])
           }}>もう一回</button>
+          <a
+            className="btn btn--x-share btn--sm"
+            href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`次のクエストは「${gachaSuggestion.title}」！ #QuestBoard`)}&url=${encodeURIComponent('https://myquestboard.entaku.app')}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Xでシェア
+          </a>
           <button className="btn btn--ghost btn--sm" onClick={() => setGachaSuggestion(null)}>✕</button>
         </div>
       )}
