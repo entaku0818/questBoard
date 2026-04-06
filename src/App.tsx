@@ -1,7 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { logEvent } from 'firebase/analytics'
-import { getAnalyticsInstance } from './lib/firebase'
+import { trackEvent } from './lib/firebase'
 import BucketList from './bucket-list'
 import Pyramid from './pyramid'
 import AuthButton from './components/AuthButton'
@@ -15,9 +14,7 @@ export default function App() {
   const [page, setPage] = useState('bucket')
 
   useEffect(() => {
-    getAnalyticsInstance().then((analytics) => {
-      if (analytics) logEvent(analytics, 'page_view')
-    })
+    trackEvent('page_view')
   }, [])
 
   return (

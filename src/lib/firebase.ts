@@ -1,7 +1,7 @@
 import { initializeApp, getApps } from 'firebase/app'
 import { getAuth, GoogleAuthProvider } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
-import { getAnalytics, isSupported, type Analytics } from 'firebase/analytics'
+import { type Analytics } from 'firebase/analytics'
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY?.trim(),
@@ -19,12 +19,9 @@ export const auth = getAuth(app)
 export const db = getFirestore(app)
 export const googleProvider = new GoogleAuthProvider()
 
-let analyticsInstance: Analytics | null = null
-export async function getAnalyticsInstance(): Promise<Analytics | null> {
-  if (analyticsInstance) return analyticsInstance
-  if (await isSupported()) {
-    analyticsInstance = getAnalytics(app)
-    return analyticsInstance
+// gtag経由でイベントを送信
+export function trackEvent(eventName: string, params?: Record<string, string>) {
+  if (typeof window !== 'undefined' && typeof (window as unknown as { gtag?: Function }).gtag === 'function') {
+    (window as unknown as { gtag: Function }).gtag('event', eventName, params)
   }
-  return null
 }

@@ -1,6 +1,5 @@
 'use client'
-import { logEvent } from 'firebase/analytics'
-import { getAnalyticsInstance } from '../lib/firebase'
+import { trackEvent } from '../lib/firebase'
 
 type Status = '未着手' | '進行中' | '完了'
 type ShareItem = {
@@ -86,9 +85,7 @@ export default function ShareCard({ userName = 'あなた', items = [], complete
   }
 
   function handleCopy() {
-    getAnalyticsInstance().then((analytics) => {
-      if (analytics) logEvent(analytics, 'share', { method: 'copy' })
-    })
+    trackEvent('share', { method: 'copy' })
     navigator.clipboard.writeText(buildShareText())
       .then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000) })
       .catch(() => {/* silent fail */})
@@ -99,9 +96,7 @@ export default function ShareCard({ userName = 'あなた', items = [], complete
   const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(buildShareText())}&url=${encodeURIComponent(ogUrl)}`
 
   function handleTweet() {
-    getAnalyticsInstance().then((analytics) => {
-      if (analytics) logEvent(analytics, 'share', { method: 'x_post' })
-    })
+    trackEvent('share', { method: 'x_post' })
   }
 
   // ── カード本体はすべてインラインスタイル（スクリーンショット時に確実に反映） ──
