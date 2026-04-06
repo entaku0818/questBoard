@@ -350,6 +350,15 @@ export default function BucketList() {
           >
             🎴 シェアカードを見る
           </button>
+          <a
+            className="btn btn--x-share completion-banner__cta"
+            href={`https://twitter.com/intent/tweet?text=${encodeURIComponent('クエスト達成！')}&url=${encodeURIComponent('https://myquestboard.entaku.app')}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => setCompletionBanner(null)}
+          >
+            Xでシェア
+          </a>
           <button className="completion-banner__close" onClick={() => setCompletionBanner(null)}>✕</button>
         </div>
       )}
