@@ -95,7 +95,7 @@ export default function ShareCard({ userName = 'あなた', items = [], complete
   }
 
   const count = completedCount ?? achievedCount
-  const ogUrl = `https://quest-board-p3iy27582-entaku0818s-projects.vercel.app/api/og?count=${count}`
+  const ogUrl = `https://myquestboard.entaku.app/api/og?count=${count}`
   const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(buildShareText())}&url=${encodeURIComponent(ogUrl)}`
 
   function handleTweet() {
