@@ -50,8 +50,11 @@ export default function RootLayout({ children }) {
           }}
         />
       </head>
-      <body>{children}</body>
-      <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID ?? ''} />
+      <body>
+        {children}
+        <script dangerouslySetInnerHTML={{ __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('consent','default',{'analytics_storage':'granted'});` }} />
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID ?? ''} />
+      </body>
     </html>
   )
 }
