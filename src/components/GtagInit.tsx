@@ -13,7 +13,8 @@ export default function GtagInit({ gaId }: { gaId: string }) {
     if (!gaId) return
 
     window.dataLayer = window.dataLayer || []
-    window.gtag = function (...args: unknown[]) { window.dataLayer.push(args) }
+    // eslint-disable-next-line prefer-rest-params
+    window.gtag = function gtag() { window.dataLayer.push(arguments) }
     window.gtag('consent', 'default', { analytics_storage: 'granted' })
     window.gtag('js', new Date())
     window.gtag('config', gaId)
