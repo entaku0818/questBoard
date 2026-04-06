@@ -1,5 +1,5 @@
 import '../src/style.css'
-import { GoogleAnalytics } from '@next/third-parties/google'
+import GtagInit from '../src/components/GtagInit'
 
 export const metadata = {
   metadataBase: new URL('https://myquestboard.entaku.app'),
@@ -50,8 +50,10 @@ export default function RootLayout({ children }) {
           }}
         />
       </head>
-      <body>{children}</body>
-      <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID ?? ''} />
+      <body>
+        {children}
+        <GtagInit gaId={process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID ?? ''} />
+      </body>
     </html>
   )
 }
