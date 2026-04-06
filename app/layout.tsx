@@ -30,10 +30,10 @@ export default function RootLayout({ children }) {
     <html lang="ja">
       <head>
         {/* GA4 direct integration (gtag.js) */}
-        <script async src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID}`} />
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-G0SEE725R0" />
         <script
           dangerouslySetInnerHTML={{
-            __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID}');`,
+            __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-G0SEE725R0');`,
           }}
         />
         <script
