@@ -11,28 +11,10 @@ type ShareItem = {
 }
 interface ShareCardProps {
   userName?: string
-  avatarEmoji?: string
   items?: ShareItem[]
   completedCount?: number
 }
 
-/**
- * ShareCard.jsx — SNSシェア用カード
- *
- * 仕様:
- *   - ユーザー名・アバター絵文字・やりたいことリスト上位5件・達成数/総数を表示
- *   - html2canvas / dom-to-image 不使用（スクリーンショット前提）
- *   - ダークグラデーション背景で SNS 映えするデザイン
- *
- * Props:
- *   userName    {string}  - 表示名 例: "田中太郎"
- *   avatarEmoji {string}  - アバター絵文字 例: "🧗"
- *   items       {Array}   - bucket-list の items 配列
- *                           各要素: { id, title, category, status('未着手'|'進行中'|'完了') }
- *
- * 使い方:
- *   <ShareCard userName="田中太郎" avatarEmoji="🧗" items={bucketItems} />
- */
 
 const STATUS_ICON = {
   '完了':  { icon: '✅', color: '#10b981' },
@@ -74,7 +56,7 @@ function ProgressBar({ pct }) {
 import { useState } from 'react'
 
 // ── メインコンポーネント ─────────────────────────────────────────────
-export default function ShareCard({ userName = 'あなた', avatarEmoji = '⚔️', items = [], completedCount }: ShareCardProps) {
+export default function ShareCard({ userName = 'あなた', items = [], completedCount }: ShareCardProps) {
   const [copied, setCopied] = useState(false)
   const totalCount    = items.length
   const achievedCount = items.filter((i) => i.status === '完了').length
@@ -94,7 +76,7 @@ export default function ShareCard({ userName = 'あなた', avatarEmoji = '⚔�
       return `${s} ${i.title}`
     })
     return [
-      `${avatarEmoji} ${userName}のやりたいことリスト`,
+      `🪣 ${userName}のやりたいことリスト`,
       `達成: ${achievedCount}/${totalCount}件 (${pct}%)`,
       '',
       ...lines,
@@ -174,7 +156,7 @@ export default function ShareCard({ userName = 'あなた', avatarEmoji = '⚔�
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: '22px',
             }}>
-              {avatarEmoji}
+              🪣
             </div>
             <div>
               <div style={{ fontSize: '15px', fontWeight: 700, color: '#fff' }}>

@@ -82,7 +82,6 @@ export default function BucketList() {
   })
   const [showShareModal, setShowShareModal] = useState(false)
   const [userName, setUserName] = useState('あなた')
-  const [avatarEmoji, setAvatarEmoji] = useState('⚔️')
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [toast, setToast] = useState<string | null>(null)
   const [expandedId, setExpandedId] = useState<string | null>(null)
@@ -298,7 +297,7 @@ export default function BucketList() {
             />
             <button className="onboarding__add-btn" onClick={addRapidItem}>追加</button>
           </div>
-          <p className="onboarding__hint">Enterで次々追加できます</p>
+
 
           {items.length > 0 && (
             <ul className="onboarding__list">
@@ -576,21 +575,9 @@ export default function BucketList() {
                   placeholder="あなたの名前"
                 />
               </label>
-              <label>
-                アバター絵文字
-                <input
-                  type="text"
-                  value={avatarEmoji}
-                  onChange={(e) => setAvatarEmoji(e.target.value)}
-                  maxLength={4}
-                  placeholder="⚔️"
-                  style={{ width: '64px' }}
-                />
-              </label>
             </div>
             <ShareCard
               userName={userName || 'あなた'}
-              avatarEmoji={avatarEmoji || '⚔️'}
               items={items}
               completedCount={completedCount}
             />
