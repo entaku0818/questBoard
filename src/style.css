@@ -1,17 +1,33 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg: #f5f5f5;
-  --bg-card: #ffffff;
-  --bg-input: #f0f0f0;
-  --text: #111111;
-  --text-muted: #777777;
-  --border: #e0e0e0;
-  --accent: #3b82f6;
-  --accent-hover: #2563eb;
-  --danger: #ef4444;
+  /* ── ベース ── */
+  --bg:       #0f0f1a;
+  --bg-card:  #1a1a2e;
+  --bg-input: #252540;
+
+  /* ── テキスト ── */
+  --text:       #e8e6f0;
+  --text-h:     #ffffff;
+  --text-muted: #8b8aa0;
+
+  /* ── ボーダー・影 ── */
+  --border: #2a2a4a;
+  --shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+
+  /* ── アクセント（ローズレッド） ── */
+  --accent:        #f43f5e;
+  --accent-hover:  #e11d48;
+  --accent-bg:     rgba(244, 63, 94, 0.12);
+  --accent-border: rgba(244, 63, 94, 0.3);
+
+  /* ── セマンティックカラー ── */
+  --danger:  #ef4444;
   --success: #22c55e;
   --warning: #f59e0b;
+
+  /* ── その他 ── */
+  --code-bg: #1a1a2e;
 }
 
 body {
@@ -889,22 +905,7 @@ button:hover { background: var(--accent-hover); }
   font-size: 0.875rem;
 }
 
-/* ═══════════════════════════════════════════════════════
-   CSS変数定義 (TodoTabs・共通コンポーネントで使用)
-   ═══════════════════════════════════════════════════════ */
-
-:root {
-  --bg: #12121f;
-  --border: #2a2a4a;
-  --text: #aaa;
-  --text-h: #e0e0e0;
-  --accent: #f43f5e;
-  --accent-bg: rgba(244, 63, 94, 0.1);
-  --accent-border: rgba(244, 63, 94, 0.3);
-  --code-bg: #1a1a2e;
-  --shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-  --text-muted: #666;
-}
+/* CSS変数は style.css 冒頭の :root に統合済み */
 
 /* ページ別UIトーン */
 .page-content--bucket {

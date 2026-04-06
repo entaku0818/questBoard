@@ -173,7 +173,7 @@ export default function ShareCard({ userName = 'あなた', items = [], complete
             fontSize: '11px', color: '#6b7280',
             letterSpacing: '1.5px', textTransform: 'uppercase',
           }}>
-            ⚔️ QuestBoard
+            🪣 QuestBoard
           </div>
         </div>
 
