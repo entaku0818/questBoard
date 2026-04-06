@@ -17,7 +17,7 @@ export function GET(req) {
         <div style={{ fontSize: '72px', marginBottom: '16px', display: 'flex' }}>⚔</div>
         <div style={{ fontSize: '96px', fontWeight: 'bold', color: '#f0c040', marginBottom: '28px', display: 'flex', letterSpacing: '4px' }}>QuestBoard</div>
         <div style={{ fontSize: '40px', color: '#c0c0d0', display: 'flex' }}>{subtitle}</div>
-        <div style={{ position: 'absolute', bottom: '28px', fontSize: '22px', color: '#5050a0', display: 'flex' }}>quest-board.vercel.app</div>
+        <div style={{ position: 'absolute', bottom: '28px', fontSize: '22px', color: '#5050a0', display: 'flex' }}>myquestboard.entaku.app</div>
       </div>
     ),
     { width: 1200, height: 630 }
