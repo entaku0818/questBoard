@@ -361,34 +361,38 @@ export default function BucketList() {
       </div>
 
       <div className="bucket-list__filters">
-        <div className="bucket-list__filter-tabs">
-          {['すべて', ...STATUSES].map((s) => (
-            <button
-              key={s}
-              className={`btn btn--filter${filterStatus === s ? ' btn--active' : ''}`}
-              onClick={() => setFilterStatus(s)}
-            >
-              {s}
-            </button>
-          ))}
+        <div className="bucket-list__filter-left">
+          <div className="bucket-list__filter-tabs">
+            {['すべて', ...STATUSES].map((s) => (
+              <button
+                key={s}
+                className={`btn btn--filter${filterStatus === s ? ' btn--active' : ''}`}
+                onClick={() => setFilterStatus(s)}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+          <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)}>
+            <option>すべて</option>
+            {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
+          </select>
         </div>
-        <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)}>
-          <option>すべて</option>
-          {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
-        </select>
-        <button className="btn btn--primary" onClick={() => { resetForm(); setShowForm(true) }}>
-          ＋ 追加
-        </button>
-        <button className="btn btn--gacha" onClick={() => {
-          const unused = GACHA_ITEMS.filter(g => !items.some(i => i.title === g.title))
-          const pool = unused.length > 0 ? unused : GACHA_ITEMS
-          setGachaSuggestion(pool[Math.floor(Math.random() * pool.length)])
-        }}>
-          🎲 ガチャ
-        </button>
-        <button className="btn" onClick={() => setShowShareModal(true)}>
-          🎴 シェアカード
-        </button>
+        <div className="bucket-list__filter-actions">
+          <button className="btn btn--primary" onClick={() => { resetForm(); setShowForm(true) }}>
+            ＋ 追加
+          </button>
+          <button className="btn btn--gacha" onClick={() => {
+            const unused = GACHA_ITEMS.filter(g => !items.some(i => i.title === g.title))
+            const pool = unused.length > 0 ? unused : GACHA_ITEMS
+            setGachaSuggestion(pool[Math.floor(Math.random() * pool.length)])
+          }}>
+            🎲 ガチャ
+          </button>
+          <button className="btn" onClick={() => setShowShareModal(true)}>
+            🎴 シェアカード
+          </button>
+        </div>
       </div>
 
       {gachaSuggestion && (

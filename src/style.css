@@ -326,7 +326,30 @@ button:hover { background: var(--accent-hover); }
 .bucket-list__header h2 { font-size: 1.3rem; color: var(--accent); margin-bottom: 4px; }
 .bucket-list__progress { font-size: 0.85rem; color: var(--text-muted); }
 
-.bucket-list__filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.bucket-list__filters {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.bucket-list__filter-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.bucket-list__filter-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
 
 .bucket-list__filter-tabs { display: flex; gap: 4px; flex-wrap: wrap; }
 
@@ -816,8 +839,12 @@ button:hover { background: var(--accent-hover); }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
+  padding: 12px 20px;
   border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--bg-card);
+  z-index: 1;
 }
 
 .modal-header h3 {
@@ -840,7 +867,7 @@ button:hover { background: var(--accent-hover); }
 .modal-settings {
   display: flex;
   gap: 10px;
-  padding: 14px 20px;
+  padding: 10px 20px;
   border-bottom: 1px solid var(--border);
   flex-wrap: wrap;
 }
@@ -871,7 +898,7 @@ button:hover { background: var(--accent-hover); }
   --border: #2a2a4a;
   --text: #aaa;
   --text-h: #e0e0e0;
-  --accent: var(--accent);
+  --accent: #f43f5e;
   --accent-bg: rgba(244, 63, 94, 0.1);
   --accent-border: rgba(244, 63, 94, 0.3);
   --code-bg: #1a1a2e;
@@ -881,7 +908,7 @@ button:hover { background: var(--accent-hover); }
 
 /* ページ別UIトーン */
 .page-content--bucket {
-  --accent: var(--accent);
+  --accent: #f43f5e;
   --accent-bg: rgba(244, 63, 94, 0.1);
   --accent-border: rgba(244, 63, 94, 0.3);
 }
