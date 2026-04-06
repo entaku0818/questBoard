@@ -29,7 +29,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="ja">
-      <head>
+      <body>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -49,8 +49,6 @@ export default function RootLayout({ children }) {
             }),
           }}
         />
-      </head>
-      <body>
         {children}
         <GtagInit gaId={process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID ?? ''} />
       </body>
