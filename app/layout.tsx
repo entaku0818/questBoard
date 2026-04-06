@@ -1,5 +1,4 @@
 import '../src/style.css'
-import GtagInit from '../src/components/GtagInit'
 
 export const metadata = {
   metadataBase: new URL('https://myquestboard.entaku.app'),
@@ -26,9 +25,23 @@ export const metadata = {
   },
 }
 
+const GA_ID = process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID ?? ''
+
 export default function RootLayout({ children }) {
   return (
     <html lang="ja">
+      <head>
+        {GA_ID && (
+          <>
+            {/* Google tag (gtag.js) - official implementation */}
+            {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+            <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} />
+            <script dangerouslySetInnerHTML={{
+              __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}',{'debug_mode':true});`
+            }} />
+          </>
+        )}
+      </head>
       <body>
         <script
           type="application/ld+json"
@@ -50,7 +63,6 @@ export default function RootLayout({ children }) {
           }}
         />
         {children}
-        <GtagInit gaId={process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID ?? ''} />
       </body>
     </html>
   )
