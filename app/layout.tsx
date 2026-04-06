@@ -1,4 +1,5 @@
 import '../src/style.css'
+import { GoogleAnalytics } from '@next/third-parties/google'
 
 export const metadata = {
   metadataBase: new URL('https://myquestboard.entaku.app'),
@@ -29,13 +30,6 @@ export default function RootLayout({ children }) {
   return (
     <html lang="ja">
       <head>
-        {/* GA4 direct integration (gtag.js) */}
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-G0SEE725R0" />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-G0SEE725R0');`,
-          }}
-        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -57,6 +51,7 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body>{children}</body>
+      <GoogleAnalytics gaId="G-G0SEE725R0" />
     </html>
   )
 }
