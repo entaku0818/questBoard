@@ -1,4 +1,6 @@
 'use client'
+import { logEvent } from 'firebase/analytics'
+import { getAnalyticsInstance } from '../lib/firebase'
 
 type Status = '未着手' | '進行中' | '完了'
 type ShareItem = {
@@ -101,17 +103,10 @@ export default function ShareCard({ userName = 'あなた', avatarEmoji = '⚔�
     ].join('\n')
   }
 
-  function incrementShareCount() {
-    try {
-      const stats = JSON.parse(localStorage.getItem('questboard-stats') || '{}')
-      stats.shareCount = (stats.shareCount ?? 0) + 1
-      localStorage.setItem('questboard-stats', JSON.stringify(stats))
-    } catch { /* silent */ }
-  }
-
   function handleCopy() {
-    console.log('share_event', { type: 'copy' })
-    incrementShareCount()
+    getAnalyticsInstance().then((analytics) => {
+      if (analytics) logEvent(analytics, 'share', { method: 'copy' })
+    })
     navigator.clipboard.writeText(buildShareText())
       .then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000) })
       .catch(() => {/* silent fail */})
@@ -122,8 +117,9 @@ export default function ShareCard({ userName = 'あなた', avatarEmoji = '⚔�
   const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(buildShareText())}&url=${encodeURIComponent(ogUrl)}`
 
   function handleTweet() {
-    console.log('share_event', { type: 'x_post' })
-    incrementShareCount()
+    getAnalyticsInstance().then((analytics) => {
+      if (analytics) logEvent(analytics, 'share', { method: 'x_post' })
+    })
   }
 
   // ── カード本体はすべてインラインスタイル（スクリーンショット時に確実に反映） ──
