@@ -29,6 +29,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="ja">
       <head>
+        {/* GA4 consent: analytics_storage granted by default (no GDPR requirement) */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('consent','default',{analytics_storage:'granted'});`,
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
