@@ -60,15 +60,7 @@ const GACHA_ITEMS: { title: string; category: string }[] = [
 ]
 
 export default function BucketList() {
-  const [items, setItems] = useState<BucketItem[]>(() => {
-    try {
-      if (typeof window === 'undefined') return []
-      const raw = localStorage.getItem(STORAGE_KEY)
-      return raw ? JSON.parse(raw) : []
-    } catch {
-      return []
-    }
-  })
+  const [items, setItems] = useState<BucketItem[]>([])
   const [filterStatus, setFilterStatus] = useState('すべて')
   const [filterCategory, setFilterCategory] = useState('すべて')
   const [showForm, setShowForm] = useState(false)
@@ -86,14 +78,20 @@ export default function BucketList() {
   const [toast, setToast] = useState<string | null>(null)
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [actionInputs, setActionInputs] = useState<Record<string, string>>({})
-  const [onboarding, setOnboarding] = useState(() => {
-    if (typeof window === 'undefined') return false
-    return localStorage.getItem('questboard-onboarding-done') !== 'true'
-  })
+  const [onboarding, setOnboarding] = useState(false)
   const [rapidInput, setRapidInput] = useState('')
   const [completionBanner, setCompletionBanner] = useState<CompletionBanner | null>(null)
   const [gachaSuggestion, setGachaSuggestion] = useState<{ title: string; category: string } | null>(null)
   const bannerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // マウント後にlocalStorageから読み込み（hydration mismatch回避）
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY)
+      if (raw) setItems(JSON.parse(raw))
+    } catch { /* silent */ }
+    setOnboarding(localStorage.getItem('questboard-onboarding-done') !== 'true')
+  }, [])
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
