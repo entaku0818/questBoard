@@ -1,6 +1,10 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import ShareCard from './components/ShareCard'
+import StatsCard from './components/StatsCard'
+import { auth, db } from './lib/firebase'
+import { onAuthStateChanged, User } from 'firebase/auth'
+import { doc, onSnapshot, setDoc } from 'firebase/firestore'
 
 type Status = '未着手' | '進行中' | '完了'
 type Action = { id: string; text: string; done: boolean }
@@ -61,6 +65,8 @@ const GACHA_ITEMS: { title: string; category: string }[] = [
 
 export default function BucketList() {
   const [items, setItems] = useState<BucketItem[]>([])
+  const [user, setUser] = useState<User | null>(null)
+  const [showStats, setShowStats] = useState(false)
   const [filterStatus, setFilterStatus] = useState('すべて')
   const [filterCategory, setFilterCategory] = useState('すべて')
   const [showForm, setShowForm] = useState(false)
@@ -93,9 +99,33 @@ export default function BucketList() {
     setOnboarding(localStorage.getItem('questboard-onboarding-done') !== 'true')
   }, [])
 
+  // 認証状態を監視
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
-  }, [items])
+    const unsub = onAuthStateChanged(auth, (u) => setUser(u))
+    return unsub
+  }, [])
+
+  // ログイン中はFirestoreをリアルタイム同期
+  useEffect(() => {
+    if (!user) return
+    const ref = doc(db, 'users', user.uid)
+    const unsub = onSnapshot(ref, (snap) => {
+      if (snap.exists()) {
+        const newItems = snap.data().bucketList ?? []
+        setItems(newItems)
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(newItems))
+      }
+    })
+    return unsub
+  }, [user])
+
+  function saveItems(newItems: BucketItem[]) {
+    setItems(newItems)
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(newItems))
+    if (user) {
+      setDoc(doc(db, 'users', user.uid), { bucketList: newItems, updatedAt: Date.now() }, { merge: true })
+    }
+  }
 
   // Escキーでシェアカードモーダルを閉じる
   useEffect(() => {
@@ -126,7 +156,7 @@ export default function BucketList() {
     if (!trimmed) return
 
     if (editingId !== null) {
-      setItems(items.map((item) =>
+      saveItems(items.map((item) =>
         item.id === editingId ? { ...item, ...form, title: trimmed, status: form.status as Status } : item
       ))
     } else {
@@ -137,7 +167,7 @@ export default function BucketList() {
         status: form.status as Status,
         createdAt: new Date().toISOString(),
       }
-      setItems([...items, newItem])
+      saveItems([...items, newItem])
     }
     closeForm()
   }
@@ -159,7 +189,7 @@ export default function BucketList() {
   }
 
   const confirmDelete = (id) => {
-    setItems(items.filter((item) => item.id !== id))
+    saveItems(items.filter((item) => item.id !== id))
     setDeletingId(null)
   }
 
@@ -178,7 +208,8 @@ export default function BucketList() {
     const item = items.find((i) => i.id === id)
     const next: Record<Status, Status> = { '未着手': '進行中', '進行中': '完了', '完了': '未着手' }
     const newStatus = next[item.status]
-    setItems(items.map((i) => i.id !== id ? i : { ...i, status: newStatus }))
+    const newItems = items.map((i) => i.id !== id ? i : { ...i, status: newStatus })
+    saveItems(newItems)
     if (filterStatus !== 'すべて' && filterStatus !== newStatus) {
       showToast(`「${item.title}」を「${newStatus}」に変更しました（フィルターにより非表示）`)
     }
@@ -192,16 +223,17 @@ export default function BucketList() {
   function addAction(itemId) {
     const text = (actionInputs[itemId] || '').trim()
     if (!text) return
-    setItems(items.map((i) => i.id !== itemId ? i : {
+    const withAction = items.map((i) => i.id !== itemId ? i : {
       ...i,
       actions: [...(i.actions ?? []), { id: crypto.randomUUID(), text, done: false }],
-    }))
-    setActionInputs({ ...actionInputs, [itemId]: '' })
+    })
     // アクションが入ったら自動で「進行中」に
-    setItems((prev) => prev.map((i) => {
+    const withStatus = withAction.map((i) => {
       if (i.id !== itemId || i.status !== '未着手') return i
-      return { ...i, status: '進行中' }
-    }))
+      return { ...i, status: '進行中' as Status }
+    })
+    saveItems(withStatus)
+    setActionInputs({ ...actionInputs, [itemId]: '' })
   }
 
   function toggleAction(itemId, actionId) {
@@ -213,7 +245,7 @@ export default function BucketList() {
       const allDone = actions.length > 0 && actions.every((a) => a.done)
       return { ...i, actions, status: allDone ? '完了' : actions.some((a) => a.done) ? '進行中' : i.status }
     })
-    setItems(updatedItems)
+    saveItems(updatedItems)
 
     const originalItem = items.find((i) => i.id === itemId)
     const updatedItem = updatedItems.find((i) => i.id === itemId)
@@ -224,7 +256,7 @@ export default function BucketList() {
   }
 
   function deleteAction(itemId, actionId) {
-    setItems(items.map((i) => i.id !== itemId ? i : {
+    saveItems(items.map((i) => i.id !== itemId ? i : {
       ...i,
       actions: (i.actions ?? []).filter((a) => a.id !== actionId),
     }))
@@ -246,7 +278,7 @@ export default function BucketList() {
   function addRapidItem() {
     const title = rapidInput.trim()
     if (!title) return
-    setItems((prev) => [...prev, {
+    saveItems([...items, {
       id: crypto.randomUUID(),
       title,
       category: 'その他',
@@ -398,8 +430,21 @@ export default function BucketList() {
           <button className="btn" onClick={() => setShowShareModal(true)}>
             🎴 シェアカード
           </button>
+          <button className="btn" onClick={() => setShowStats((v) => !v)}>
+            📊 グラフ
+          </button>
+          {user && (
+            <button className="btn" onClick={() => {
+              const url = `${window.location.origin}/share/${user.uid}`
+              navigator.clipboard.writeText(url).then(() => showToast('共有リンクをコピーしました'))
+            }}>
+              🔗 共有
+            </button>
+          )}
         </div>
       </div>
+
+      {showStats && <StatsCard items={items} />}
 
       {gachaSuggestion && (
         <div className="gacha-suggestion">

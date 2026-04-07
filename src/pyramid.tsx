@@ -1,5 +1,8 @@
 'use client'
 import React, { useState, useEffect } from 'react'
+import { auth, db } from './lib/firebase'
+import { onAuthStateChanged, User } from 'firebase/auth'
+import { doc, onSnapshot, setDoc } from 'firebase/firestore'
 
 type TierId = 'dream' | 'goal' | 'task'
 type PyramidItem = { id: string; text: string }
@@ -15,23 +18,48 @@ const TIERS = [
 ]
 
 export default function Pyramid() {
-  const [data, setData] = useState(() => {
-    try {
-      if (typeof window === 'undefined') return DEFAULT_DATA
-      const raw = localStorage.getItem(STORAGE_KEY)
-      return raw ? JSON.parse(raw) : DEFAULT_DATA
-    } catch {
-      return DEFAULT_DATA
-    }
-  })
+  const [data, setData] = useState<PyramidData>(DEFAULT_DATA)
+  const [user, setUser] = useState<User | null>(null)
   const [activeTier, setActiveTier] = useState(null)
   const [inputText, setInputText] = useState('')
   const [editTarget, setEditTarget] = useState(null) // { tier, id }
   const [deletingItem, setDeletingItem] = useState(null) // { tier, id }
 
+  // マウント後にlocalStorageから読み込み（hydration mismatch回避）
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
-  }, [data])
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY)
+      if (raw) setData(JSON.parse(raw))
+    } catch { /* silent */ }
+  }, [])
+
+  // 認証状態を監視
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (u) => setUser(u))
+    return unsub
+  }, [])
+
+  // ログイン中はFirestoreをリアルタイム同期
+  useEffect(() => {
+    if (!user) return
+    const ref = doc(db, 'users', user.uid)
+    const unsub = onSnapshot(ref, (snap) => {
+      if (snap.exists()) {
+        const newData = snap.data().pyramid ?? DEFAULT_DATA
+        setData(newData)
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(newData))
+      }
+    })
+    return unsub
+  }, [user])
+
+  function saveData(newData: PyramidData) {
+    setData(newData)
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(newData))
+    if (user) {
+      setDoc(doc(db, 'users', user.uid), { pyramid: newData, updatedAt: Date.now() }, { merge: true })
+    }
+  }
 
   const handleAddClick = (tierId) => {
     if (activeTier === tierId) return
@@ -51,18 +79,18 @@ export default function Pyramid() {
     if (!trimmed || !activeTier) return
 
     if (editTarget) {
-      setData((prev) => ({
-        ...prev,
-        [editTarget.tier]: prev[editTarget.tier].map((item) =>
+      saveData({
+        ...data,
+        [editTarget.tier]: data[editTarget.tier].map((item) =>
           item.id === editTarget.id ? { ...item, text: trimmed } : item
         ),
-      }))
+      })
     } else {
       const newItem = { id: crypto.randomUUID(), text: trimmed, createdAt: new Date().toISOString() }
-      setData((prev) => ({
-        ...prev,
-        [activeTier]: [...prev[activeTier], newItem],
-      }))
+      saveData({
+        ...data,
+        [activeTier]: [...data[activeTier], newItem],
+      })
     }
     setActiveTier(null)
     setInputText('')
@@ -75,10 +103,10 @@ export default function Pyramid() {
 
   const confirmDelete = () => {
     if (!deletingItem) return
-    setData((prev) => ({
-      ...prev,
-      [deletingItem.tier]: prev[deletingItem.tier].filter((item) => item.id !== deletingItem.id),
-    }))
+    saveData({
+      ...data,
+      [deletingItem.tier]: data[deletingItem.tier].filter((item) => item.id !== deletingItem.id),
+    })
     setDeletingItem(null)
   }
 
