@@ -1,5 +1,23 @@
 'use client'
 import { trackEvent } from '../lib/gtag'
+import { auth, db } from '../lib/firebase'
+import { doc, setDoc, increment } from 'firebase/firestore'
+
+const STATS_KEY = 'questboard-stats'
+
+function recordShare() {
+  // localStorage
+  try {
+    const prev = JSON.parse(localStorage.getItem(STATS_KEY) || '{}')
+    prev.shareCount = (prev.shareCount ?? 0) + 1
+    localStorage.setItem(STATS_KEY, JSON.stringify(prev))
+  } catch { /* silent */ }
+  // Firestore（ログイン時）
+  const user = auth.currentUser
+  if (user) {
+    setDoc(doc(db, 'appStats', 'summary'), { shareTotal: increment(1) }, { merge: true })
+  }
+}
 
 type Status = '未着手' | '進行中' | '完了'
 type ShareItem = {
@@ -86,6 +104,7 @@ export default function ShareCard({ userName = 'あなた', items = [], complete
 
   function handleCopy() {
     trackEvent('share', { method: 'copy' })
+    recordShare()
     navigator.clipboard.writeText(buildShareText())
       .then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000) })
       .catch(() => {/* silent fail */})
@@ -97,6 +116,7 @@ export default function ShareCard({ userName = 'あなた', items = [], complete
 
   function handleTweet() {
     trackEvent('share', { method: 'x_post' })
+    recordShare()
   }
 
   // ── カード本体はすべてインラインスタイル（スクリーンショット時に確実に反映） ──

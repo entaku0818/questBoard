@@ -1992,3 +1992,50 @@ button:hover { background: var(--accent-hover); }
 .share-page__item-title { flex: 1; font-size: 0.95rem; }
 .share-page__item-category { font-size: 0.75rem; color: var(--text-muted); background: var(--bg-input); padding: 2px 8px; border-radius: 10px; }
 .share-page__footer { text-align: center; }
+
+/* ===== Admin Dashboard ===== */
+.admin-page {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 0 16px 60px;
+}
+.admin-page__title { font-size: 1.4rem; font-weight: 700; margin: 0 0 4px; }
+.admin-page__updated { font-size: 0.8rem; color: var(--text-muted); margin: 0 0 24px; }
+.admin-page__error { color: #f87171; background: #1f0000; padding: 12px; border-radius: 8px; font-size: 0.85rem; }
+
+.admin-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 32px; }
+@media (max-width: 480px) { .admin-cards { grid-template-columns: 1fr; } }
+.admin-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.admin-card__label { font-size: 0.75rem; color: var(--text-muted); }
+.admin-card__value { font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+
+.admin-section { margin-bottom: 32px; }
+.admin-section__title { font-size: 0.95rem; font-weight: 600; margin: 0 0 16px; }
+
+.admin-dau-chart { display: flex; gap: 6px; align-items: flex-end; height: 100px; }
+.admin-dau-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; height: 100%; }
+.admin-dau-bar-wrap { flex: 1; width: 100%; display: flex; align-items: flex-end; }
+.admin-dau-bar { width: 100%; background: var(--accent); border-radius: 3px 3px 0 0; min-height: 2px; }
+.admin-dau-count { font-size: 0.7rem; color: var(--text-muted); height: 16px; }
+.admin-dau-label { font-size: 0.65rem; color: var(--text-muted); }
+
+.admin-links { display: flex; flex-direction: column; gap: 8px; }
+.admin-link {
+  display: block;
+  padding: 12px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+.admin-link:hover { border-color: var(--accent); }
