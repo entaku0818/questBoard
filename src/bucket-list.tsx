@@ -85,6 +85,7 @@ export default function BucketList() {
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [actionInputs, setActionInputs] = useState<Record<string, string>>({})
   const [onboarding, setOnboarding] = useState(false)
+  const [tutorialStep, setTutorialStep] = useState<number | null>(null)
   const [rapidInput, setRapidInput] = useState('')
   const [completionBanner, setCompletionBanner] = useState<CompletionBanner | null>(null)
   const [gachaSuggestion, setGachaSuggestion] = useState<{ title: string; category: string } | null>(null)
@@ -96,7 +97,11 @@ export default function BucketList() {
       const raw = localStorage.getItem(STORAGE_KEY)
       if (raw) setItems(JSON.parse(raw))
     } catch { /* silent */ }
-    setOnboarding(localStorage.getItem('questboard-onboarding-done') !== 'true')
+    const onboardingDone = localStorage.getItem('questboard-onboarding-done') === 'true'
+    setOnboarding(!onboardingDone)
+    if (onboardingDone && localStorage.getItem('questboard-tutorial-done') !== 'true') {
+      setTutorialStep(0)
+    }
   }, [])
 
   // 認証状態を監視
@@ -273,6 +278,25 @@ export default function BucketList() {
   function finishOnboarding() {
     localStorage.setItem('questboard-onboarding-done', 'true')
     setOnboarding(false)
+    if (localStorage.getItem('questboard-tutorial-done') !== 'true') {
+      setTutorialStep(0)
+    }
+  }
+
+  function nextTutorialStep() {
+    const TOTAL = 3
+    if (tutorialStep === null) return
+    if (tutorialStep + 1 >= TOTAL) {
+      localStorage.setItem('questboard-tutorial-done', 'true')
+      setTutorialStep(null)
+    } else {
+      setTutorialStep(tutorialStep + 1)
+    }
+  }
+
+  function skipTutorial() {
+    localStorage.setItem('questboard-tutorial-done', 'true')
+    setTutorialStep(null)
   }
 
   function addRapidItem() {
@@ -363,8 +387,46 @@ export default function BucketList() {
     )
   }
 
+  const TUTORIAL_STEPS = [
+    {
+      emoji: '👆',
+      title: 'アイテムをタップ',
+      body: 'リストのアイテムをタップすると詳細が開きます。ステータスを「進行中」→「完了」と変えて達成を記録しよう！',
+    },
+    {
+      emoji: '🎲',
+      title: 'ガチャでアイデアをゲット',
+      body: '「🎲 ガチャ」ボタンでやりたいことのアイデアをランダム提案。思いつかないときに使ってみよう！',
+    },
+    {
+      emoji: '🎴',
+      title: 'シェアカードでSNSに投稿',
+      body: '「🎴 シェアカード」でX・LINEにシェアできます。達成したら友達に自慢しよう！',
+    },
+  ]
+
   return (
     <div className="bucket-list">
+      {tutorialStep !== null && (
+        <div className="tutorial-overlay" onClick={nextTutorialStep}>
+          <div className="tutorial-card" onClick={(e) => e.stopPropagation()}>
+            <div className="tutorial-steps">
+              {TUTORIAL_STEPS.map((_, i) => (
+                <div key={i} className={`tutorial-dot${i === tutorialStep ? ' tutorial-dot--active' : ''}`} />
+              ))}
+            </div>
+            <div className="tutorial-emoji">{TUTORIAL_STEPS[tutorialStep].emoji}</div>
+            <h3 className="tutorial-title">{TUTORIAL_STEPS[tutorialStep].title}</h3>
+            <p className="tutorial-body">{TUTORIAL_STEPS[tutorialStep].body}</p>
+            <div className="tutorial-actions">
+              <button className="tutorial-skip" onClick={skipTutorial}>スキップ</button>
+              <button className="tutorial-next" onClick={nextTutorialStep}>
+                {tutorialStep + 1 >= TUTORIAL_STEPS.length ? '始めよう 🚀' : '次へ →'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {toast && <div className="bucket-toast">{toast}</div>}
       {completionBanner && (
         <div className="completion-banner">
