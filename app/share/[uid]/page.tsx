@@ -22,9 +22,40 @@ async function fetchShareData(uid: string): Promise<{ bucketList: BucketItem[]; 
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ uid: string }> }): Promise<Metadata> {
+  const { uid } = await params
+  const data = await fetchShareData(uid)
+
+  if (!data) {
+    return {
+      title: 'やりたいことリスト — QuestBoard',
+      description: 'QuestBoardでシェアされたやりたいことリスト',
+    }
+  }
+
+  const total = data.bucketList.length
+  const completed = data.bucketList.filter((i) => i.status === '完了').length
+  const title = `${completed}/${total}件達成のやりたいことリスト — QuestBoard`
+  const description = `QuestBoardでシェアされたやりたいことリスト。${total}件中${completed}件達成中！`
+  const ogImageUrl = `https://myquestboard.entaku.app/api/og?count=${completed}&total=${total}`
+
   return {
-    title: 'やりたいことリスト — QuestBoard',
-    description: 'QuestBoardでシェアされたやりたいことリスト',
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      url: `https://myquestboard.entaku.app/share/${uid}`,
+      images: [{ url: ogImageUrl, width: 1200, height: 630 }],
+      locale: 'ja_JP',
+      siteName: 'QuestBoard',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [ogImageUrl],
+    },
   }
 }
 

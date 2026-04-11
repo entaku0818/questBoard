@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://quest-board-p3iy27582-entaku0818s-projects.vercel.app/sitemap.xml
+Sitemap: https://myquestboard.entaku.app/sitemap.xml

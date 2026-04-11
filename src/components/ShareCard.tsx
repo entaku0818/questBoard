@@ -111,11 +111,18 @@ export default function ShareCard({ userName = 'あなた', items = [], complete
   }
 
   const count = completedCount ?? achievedCount
-  const ogUrl = `https://myquestboard.entaku.app/api/og?count=${count}`
-  const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(buildShareText())}&url=${encodeURIComponent(ogUrl)}`
+  const ogUrl = `https://myquestboard.entaku.app/api/og?count=${count}&total=${totalCount}`
+  const shareText = buildShareText()
+  const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(ogUrl)}`
+  const lineUrl = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(ogUrl)}&text=${encodeURIComponent(shareText)}`
 
   function handleTweet() {
     trackEvent('share', { method: 'x_post' })
+    recordShare()
+  }
+
+  function handleLine() {
+    trackEvent('share', { method: 'line' })
     recordShare()
   }
 
@@ -304,13 +311,22 @@ export default function ShareCard({ userName = 'あなた', items = [], complete
           {copied ? '✅ コピーしました！' : '📋 テキストをコピー'}
         </button>
         <a
-          className="share-action-btn"
+          className="share-action-btn share-action-btn--x"
           href={tweetUrl}
           target="_blank"
           rel="noopener noreferrer"
           onClick={handleTweet}
         >
           𝕏 ポストする
+        </a>
+        <a
+          className="share-action-btn share-action-btn--line"
+          href={lineUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={handleLine}
+        >
+          LINE でシェア
         </a>
       </div>
 

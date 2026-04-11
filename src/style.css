@@ -781,6 +781,18 @@ button:hover { background: var(--accent-hover); }
   border-color: var(--accent);
 }
 
+.share-action-btn--x {
+  background: #000;
+  color: #fff;
+  border-color: #333;
+}
+
+.share-action-btn--line {
+  background: #06c755;
+  color: #fff;
+  border-color: #06c755;
+}
+
 /* スクリーンショットヒント */
 .share-hint {
   font-size: 12px;
