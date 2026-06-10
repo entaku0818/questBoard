@@ -42,18 +42,61 @@
 
 ---
 
-## 2. データモデル（Firestore流用）
+## 2. データモデル（Firestore流用 / 2026-06-09 実コードで確定）
 
-既存スキーマをそのまま使う。クライアントが変わるだけ。
+ユーザーデータは **`users/{uid}` 単一ドキュメント**に集約。bucketList と pyramid を同一docのフィールドに持ち、Web版は `setDoc(..., {merge:true})` で配列ごと上書きする方式。
+
+### Firestore スキーマ
 
 ```
-users/{uid}                         … ユーザー
-appStats/summary                    … dauTotal, shareTotal
-appStats/daily/{date}/{uid}         … 日別DAU
-（やりたいことリスト本体は現状 doc(uid) に集約 / ネイティブも同じドキュメントを読み書き）
+users/{uid} {
+  bucketList: BucketItem[]
+  pyramid:    { dream: PyramidItem[], goal: PyramidItem[], task: PyramidItem[] }
+  updatedAt:  number            // epoch ms (Date.now())
+}
+appStats/summary                { dauTotal, shareTotal }
+appStats/daily/{date}/{uid}     { uid, visitedAt }      // 日別DAU
 ```
 
-→ Web版とネイティブ版で**同一データ**。片方で追加した項目がもう片方に出る。移行コストゼロ。
+```
+BucketItem  = { id, title, category, deadline, notes, status, createdAt, actions?: Action[] }
+              status:   "未着手" | "進行中" | "完了"
+              category: 旅行 | 学習 | 体験 | 創作 | 健康 | その他
+Action      = { id, text, done }
+PyramidItem = { id, text }
+```
+
+公開シェアAPI `/share/{uid}` は Admin SDK で `users/{uid}` を読み、**bucketList と updatedAt のみ**返す（pyramid は非公開）。
+
+### Swift Codable 型（ネイティブ側スケッチ）
+
+```swift
+struct UserData: Codable {
+    var bucketList: [BucketItem] = []
+    var pyramid: PyramidData = .init()
+    var updatedAt: Double = 0          // epoch ms
+}
+struct BucketItem: Codable, Identifiable {
+    var id: String
+    var title: String
+    var category: String               // → enum(rawValue:String)化推奨
+    var deadline: String               // "YYYY-MM-DD" 等、空可
+    var notes: String
+    var status: String                 // 未着手/進行中/完了 → enum化推奨
+    var createdAt: String
+    var actions: [BucketAction]?
+}
+struct BucketAction: Codable, Identifiable { var id: String; var text: String; var done: Bool }
+struct PyramidData: Codable { var dream: [PyramidItem] = []; var goal: [PyramidItem] = []; var task: [PyramidItem] = [] }
+struct PyramidItem: Codable, Identifiable { var id: String; var text: String }
+```
+
+### ネイティブ実装の留意点
+
+- Web版と**同一の `users/{uid}` に同一キー**で読み書きすれば、データ・シェア導線がそのまま共有される（移行コストゼロ）。
+- 書き込みは必ず **`setData(merge: true)`**。MVPで bucketList のみ実装しても、既存の `pyramid` キーを消さないこと。
+- 競合は last-write-wins（配列を丸ごと上書き）。MVPでは許容。
+- `updatedAt` は epoch ms の number。`deadline`/`createdAt` は String のまま扱う。
 
 ---
 
@@ -119,10 +162,10 @@ appStats/daily/{date}/{uid}         … 日別DAU
 - [x] App Store 表示名: **QuestBoard**
 - [x] プレミアムテーマ: **ゴールド + 数色**（ゴールド初手、ライト/ミニマル等を追加）
 - [x] マネタイズ: **買い切り ¥980 一本**（StoreKit2直）
+- [x] Firestoreスキーマ: **`users/{uid}` 単一doc集約で確定**（コレクション化はしない。§2参照）
 
 ### 未確定
 
-- [ ] Firestoreのリスト本体スキーマの最終確認（現状 doc(uid) 集約で良いか、コレクション化するか）
 - [ ] Android後追いの時期（iOS実績を見てから）
 
 ---
