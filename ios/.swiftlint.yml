@@ -1,0 +1,12 @@
+# QuestBoard iOS SwiftLint 設定
+# Xcodeスキャフォールド由来の命名（questBoardApp 等）を許容するため type_name は無効化。
+# ソースのリネームは行わない方針（ハーネスのみ追加）。
+
+disabled_rules:
+  - type_name
+
+identifier_name:
+  min_length: 1
+
+excluded:
+  - "**/DerivedData"
