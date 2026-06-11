@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  web:
+    name: Web (lint / build / test)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Build
+        run: npm run build
+      - name: Test
+        run: npm test
+
+  ios:
+    name: iOS (SwiftLint / build / test)
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+      - name: SwiftLint
+        working-directory: ios
+        run: |
+          brew install swiftlint
+          swiftlint --quiet
+      - name: Build
+        working-directory: ios/questBoard
+        run: |
+          xcodebuild build \
+            -project questBoard.xcodeproj \
+            -scheme questBoard \
+            -destination 'platform=macOS' \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= DEVELOPMENT_TEAM=
+      - name: Test (unit tests)
+        working-directory: ios/questBoard
+        run: |
+          xcodebuild test \
+            -project questBoard.xcodeproj \
+            -scheme questBoard \
+            -destination 'platform=macOS' \
+            -only-testing:questBoardTests \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= DEVELOPMENT_TEAM=
